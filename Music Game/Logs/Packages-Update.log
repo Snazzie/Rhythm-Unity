@@ -1,0 +1,15 @@
+
+=== Thu Feb 28 23:17:32 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were added:
+  com.unity.timeline@1.0.0
+The following packages were updated:
+  com.unity.analytics from version 3.0.9 to 3.2.2
+  com.unity.collab-proxy from version 1.2.11 to 1.2.15
+  com.unity.package-manager-ui from version 2.1.0-preview.1 to 2.1.1
+  com.unity.postprocessing from version 2.0.17-preview to 2.1.2
+  com.unity.render-pipelines.high-definition from version 5.0.0-preview to 5.2.3-preview
+  com.unity.shadergraph from version 5.0.0-preview to 5.2.3
