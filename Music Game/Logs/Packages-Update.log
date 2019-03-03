@@ -13,3 +13,11 @@ The following packages were updated:
   com.unity.postprocessing from version 2.0.17-preview to 2.1.2
   com.unity.render-pipelines.high-definition from version 5.0.0-preview to 5.2.3-preview
   com.unity.shadergraph from version 5.0.0-preview to 5.2.3
+
+=== Sat Mar  2 23:32:48 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.analytics from version 3.2.2 to 3.3.2

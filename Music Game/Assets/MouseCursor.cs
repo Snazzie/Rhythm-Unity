@@ -95,38 +95,36 @@ namespace Assets
                     //Debug.Log("On Circle: " + hit.transform.name);
                     if (IsAutoPlay)
                     {
-
-                        if (type == typeof(HitCircle))
+                        switch (OnObject)
                         {
-                            var obj = (HitCircle)OnObject;
+                            case HitCircle hitCircle:
+                                if (!hitCircle.IsHitAttempted && hitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                                {
+                                    Debug.Log("Try hit: " + hitCircle.name);
 
-                            if (!obj.IsHitAttempted && obj.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                                    hitCircle.TryHit();
+                                    GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
+                                }
+                                break;
+
+                            case SliderHitCircle sliderHitCircle:
                             {
-                                Debug.Log("Try hit: " + obj.name);
+                                if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                                {
+                                    Debug.Log("Try hit: " + sliderHitCircle.name);
 
-                                obj.TryHit();
-                                GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
+                                    sliderHitCircle.TryHit();
+                                    GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
+                                }
+
+                                break;
+                            }
+                            case SliderPositionRing sliderPositionRing:
+                            {
+                                break;
                             }
                         }
-                        else if (type == typeof(SliderHitCircle))
-                        {
-                            var obj = (SliderHitCircle)OnObject;
-                            if (!obj.IsHitAttempted && obj.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
-                            {
-                                Debug.Log("Try hit: " + obj.name);
 
-                                obj.TryHit();
-                                GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
-                            }
-
-                        }
-                        else if (type == typeof(SliderPositionRing))
-                        {
-                            var obj = (SliderPositionRing)OnObject;
-                            //obj.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed);
-
-
-                        }
                     }
                 }
             }
