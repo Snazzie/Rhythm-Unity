@@ -21,3 +21,12 @@ Update Mode: updateDependencies
 
 The following packages were updated:
   com.unity.analytics from version 3.2.2 to 3.3.2
+
+=== Thu Apr  4 19:40:30 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.package-manager-ui from version 2.1.1 to 2.1.2
+  com.unity.postprocessing from version 2.1.2 to 2.1.4
