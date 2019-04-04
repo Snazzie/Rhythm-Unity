@@ -2,7 +2,9 @@
 OSU Clone made in Unity
 
 There are tests maps bundled with this project using LFS. make sure you pull from LFS also!
+
 Only auto play works atm.
+
 Sliders currently do not work correctly. disable show sliders or whatever its called in  tap tap setup file if you want to see auto play hit every circle.
 
 Feature Goals:
