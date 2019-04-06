@@ -77,12 +77,16 @@ namespace Assets.TapTapAim
         SliderType SliderType { get; }
     }
 
-    public interface ISliderPositionRing : IObject, IHittable
+    public interface ISliderPositionRing : IObject, IFollow
     {
 
     }
 
-    public interface IHitSlider : IObject, IHittable, IQueuable
+    public interface IFollow
+    {
+    }
+
+    public interface IHitSlider : IObject, IQueuable
     {
         int Number { get; set; }
 

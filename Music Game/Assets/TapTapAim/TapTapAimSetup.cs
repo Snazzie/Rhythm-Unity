@@ -24,7 +24,6 @@ namespace Assets.TapTapAim
         public ITracker Tracker { get; set; }
 
         private bool ready;
-        private Dispatcher _dispatcher;
         private int offset = 4000;
         private bool AddOffset { get; set; }
 
@@ -33,11 +32,12 @@ namespace Assets.TapTapAim
         public AudioSource HitSource { get; set; }
         private int prevGroupID { get; set; } = -1;
         private int groupIDCount { get; set; } = 0;
+
+
         private bool showSliders = true;
-        private bool showCircles = true;
+        private bool showCircles = false;
         private int queueID = -1;
         private int HitID { get; set; } = -1;
-        private int getObjectNameID = -1;
 
         void Start()
         {
@@ -58,18 +58,11 @@ namespace Assets.TapTapAim
             InstantiateObjects();
         }
 
-        private int GetQueueId()
-        {
-            return queueID += 1;
-        }
         private int GetHitID()
         {
             return HitID += 1;
         }
-        private string GetObjectNameID()
-        {
-            return (getObjectNameID += 1).ToString();
-        }
+
         void InstantiateObjects()
         {
 
@@ -90,6 +83,8 @@ namespace Assets.TapTapAim
                         circle.HitID = GetHitID();
                         ObjToActivateQueue.Add(circle);
                         HitObjectQueue.Add(circle);
+                        circle.name = ObjToActivateQueue.Count -1 + "-HitCircle";
+                        circle.QueueID = ObjToActivateQueue.Count - 1;
                     }
                 }
                 else
@@ -102,7 +97,9 @@ namespace Assets.TapTapAim
                         {
                             //HitObjectQueue.Add(slider);
                             ObjToActivateQueue.Add(slider);
+                            slider.QueueID = ((SliderHitCircle)slider.InitialHitCircle).QueueID = ObjToActivateQueue.Count - 1;
                             slider.InitialHitCircle.HitID = GetHitID();
+                            slider.name = ObjToActivateQueue.Count -1 + "-HitSlider";
                             //slider.SliderPositionRing.HitID = GetHitID();
                             HitObjectQueue.Add(slider.InitialHitCircle);
 
@@ -137,7 +134,7 @@ namespace Assets.TapTapAim
             var instance = Instantiate(HitSliderTransform, PlayArea).GetComponent<HitSlider>();
 
             instance.TapTapAimSetup = this;
-            instance.name = GetObjectNameID() + "-HitSlider";
+            
             instance.transform.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
             instance.GetComponent<RectTransform>().sizeDelta = new Vector3(0, 0, -0.1f);
             instance.GetComponent<RectTransform>().anchorMin = new Vector2(0f, 0f);
@@ -165,12 +162,12 @@ namespace Assets.TapTapAim
 
             var sliderHitcircleInstance = CreateSliderHitCircle(circleFormat);
             sliderHitcircleInstance.transform.parent = instance.transform;
-            sliderHitcircleInstance.name = GetObjectNameID() + "-SliderHitCircle";
+            sliderHitcircleInstance.name = "SliderHitCircle";
 
             var sliderPositionRingInstance = Instantiate(SliderPositionRing, instance.transform).GetComponent<SliderPositionRing>();
             sliderPositionRingInstance.GetComponent<RectTransform>().position = sliderHitcircleInstance.GetComponent<RectTransform>().position;
 
-            sliderPositionRingInstance.name = GetObjectNameID() + "-SliderPositionRing";
+            sliderPositionRingInstance.name = "SliderPositionRing";
 
             var sliderInstance = Instantiate(
                     Slider,
@@ -205,7 +202,6 @@ namespace Assets.TapTapAim
         private HitCircle CreateHitCircle(int index, string[] hitObject)
         {
             var instance = Instantiate(HitCircleTransform, PlayArea).GetComponent<HitCircle>();
-            instance.name = GetObjectNameID() + "-HitCircle";
             instance.TapTapAimSetup = this;
 
             var format = new CircleFormat(hitObject);

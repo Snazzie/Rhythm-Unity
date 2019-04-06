@@ -11,6 +11,7 @@ namespace Assets.TapTapAim
         public LineRenderer LineRenderer { get; set; }
         public ISliderPositionRing SliderPositionRing { get; set; }
         public float SliderSpeed { get; set; } = 1f;
+        public ISliderHitCircle SliderHitCircle { get; set; }
         public void DrawSlider()
         {
             LineRenderer.positionCount = Points.Count;
