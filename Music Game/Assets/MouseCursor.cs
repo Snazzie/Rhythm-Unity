@@ -151,12 +151,10 @@ namespace Assets
             var iDs = new List<int>();
             foreach (var raycastHit2D in array)
             {
-                try
-                {
-                    if (raycastHit2D.transform.GetComponent<IHittable>() != null)
-                        iDs.Add(raycastHit2D.transform.GetComponent<IHittable>().HitID);
-                }
-                catch { }
+
+                if (raycastHit2D.transform.GetComponent<IHittable>() != null)
+                    iDs.Add(raycastHit2D.transform.GetComponent<IHittable>().HitID);
+
             }
             if (!iDs.Any())
             {
@@ -164,46 +162,26 @@ namespace Assets
                 return false;
             }
 
-            try
+            int min = iDs.Min();
+            OnObject = array[iDs.ToList().IndexOf(min)].transform.GetComponent<IObject>();
+
+            if (OnObject.GetType() == typeof(HitCircle))
             {
-                int min = iDs.Min();
-                var nextHitObject = array[iDs.ToList().IndexOf(min)].transform;
-
-
-                try
-                {
-                    OnObject = nextHitObject.GetComponent<HitCircle>();
-                    if (OnObject != null)
-                    {
-                        type = typeof(HitCircle);
-                        return true;
-                    }
-                }
-                catch { }
-
-                try
-                {
-                    OnObject = nextHitObject.GetComponent<HitSlider>();
-                    if (OnObject != null)
-                    {
-                        type = typeof(HitSlider);
-                        return false;
-                    }
-                }
-                catch { }
-                try
-                {
-                    OnObject = nextHitObject.GetComponent<SliderHitCircle>();
-                    if (OnObject != null)
-                    {
-                        type = typeof(SliderHitCircle);
-                        return true;
-                    }
-                }
-                catch { }
-
+                type = typeof(HitCircle);
+                return true;
             }
-            catch { }
+            else if (OnObject.GetType() == typeof(HitSlider))
+            {
+                type = typeof(HitSlider);
+                return false;
+            }
+            else if (OnObject.GetType() == typeof(SliderHitCircle))
+            {
+                type = typeof(SliderHitCircle);
+                return true;
+            }
+
+
 
             type = null;
             return false;

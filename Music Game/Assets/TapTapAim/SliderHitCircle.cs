@@ -19,17 +19,19 @@ namespace Assets.TapTapAim
             public int QueueID { get; set; }
             public int HitID { get; set; }
             public TimeSpan PerfectHitTime { get; set; }
-            public TimeSpan VisibleStartStart { get; set; }
-            public TimeSpan VisibleEndStart { get; set; }
             public bool IsHitAttempted { get; private set; } = false;
             public int VisibleStartOffsetMs { get; } = 400;
             public int VisibleEndOffsetMs { get; } = 50;
             public int AccuracyLaybackMs { get; set; } = 100;
             public int Number { get; set; }
+            public Visibility Visibility { get; set; } = new Visibility()
+            {
+                VisibleStartOffsetMs = 400,
+                VisibleEndOffsetMs = 50
+            };
 
             private float alpha = 0;
-            public bool fadeInTriggered;
-            public bool fadeOutTriggered;
+
             private YieldInstruction instruction = new YieldInstruction();
 
             public void Disappear() => transform.parent.GetComponent<HitSlider>().HideCircle();
@@ -41,15 +43,15 @@ namespace Assets.TapTapAim
                 TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
                 transform.GetChild(1).GetComponent<Text>().text = Number.ToString();
 
-                VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-                VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+                Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
+                Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
                 gameObject.SetActive(false);
             }
             void Update()
             {
                 if (!IsHitAttempted)
                 {
-                    if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleStartStart)
+                    if (!Visibility.fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
                     {
 
                         StartCoroutine(TimingRingShrink());
@@ -64,7 +66,7 @@ namespace Assets.TapTapAim
 
                     }
 
-                    if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleEndStart)
+                    if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleEndStart)
                     {
                         Disappear();
                         transform.GetComponent<Rigidbody2D>().simulated = false;
@@ -76,8 +78,8 @@ namespace Assets.TapTapAim
 
             public bool IsInCircleLifeBound(TimeSpan time)
             {
-                if (time >= VisibleStartStart
-                    && time <= VisibleEndStart)
+                if (time >= Visibility.VisibleStartStart
+                    && time <= Visibility.VisibleEndStart)
                 {
                     return true;
                 }
@@ -136,7 +138,7 @@ namespace Assets.TapTapAim
 
             IEnumerator TimingRingShrink()
             {
-                fadeInTriggered = true;
+                Visibility.fadeInTriggered = true;
                 float elapsedTime = 0.0f;
 
                 while (elapsedTime < 1)

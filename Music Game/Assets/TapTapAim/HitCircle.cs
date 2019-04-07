@@ -8,21 +8,20 @@ namespace Assets.TapTapAim
     public class HitCircle : MonoBehaviour, IHitCircle
     {
         public ITapTapAimSetup TapTapAimSetup { get; set; }
+        public int HitID { get; set; }
         public int QueueID { get; set; }
         public TimeSpan PerfectHitTime { get; set; }
-        public TimeSpan VisibleStartStart { get; set; }
-        public TimeSpan VisibleEndStart { get; set; }
-        public bool IsHitAttempted { get; private set; } = false;
-        public int VisibleStartOffsetMs { get; } = 400;
-        public int VisibleEndOffsetMs { get; } = 50;
-        public int AccuracyLaybackMs { get; set; } = 100;
-        public int Number { get; set; }
 
-        private float alpha = 0;
-        private bool fadeInTriggered;
-        private bool fadeOutTriggered;
+        public bool IsHitAttempted { get; private set; } = false;
+
+        public int AccuracyLaybackMs { get; set; } = 100;
+        public int GroupNumberShownOnCircle { get; set; }
+
+        private float alpha { get; set; } = 0;
+
+        public Visibility Visibility { get; set; }
         private YieldInstruction instruction = new YieldInstruction();
-        public int HitID { get; set; }
+
 
         // Use this for initialization
         void Start()
@@ -30,17 +29,22 @@ namespace Assets.TapTapAim
             transform.GetComponent<Rigidbody2D>().simulated = false;
             transform.GetComponent<CircleCollider2D>().enabled = false;
             TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
-            transform.GetChild(1).GetComponent<Text>().text = Number.ToString();
+            transform.GetChild(1).GetComponent<Text>().text = GroupNumberShownOnCircle.ToString();
             SetAlpha(alpha);
-            VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-            VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+            Visibility = new Visibility()
+            {
+                VisibleStartOffsetMs = 400,
+                VisibleEndOffsetMs = 50
+            };
+            Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(Visibility.VisibleStartOffsetMs);
+            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
             gameObject.SetActive(false);
         }
         void Update()
         {
             if (!IsHitAttempted)
             {
-                if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleStartStart)
+                if (!Visibility.fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
                 {
                     StartCoroutine(FadeIn());
                     StartCoroutine(TimingRingShrink());
@@ -53,7 +57,7 @@ namespace Assets.TapTapAim
                     transform.GetComponent<CircleCollider2D>().enabled = true;
                 }
 
-                if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleEndStart && !fadeOutTriggered)
+                if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleEndStart && !Visibility.fadeOutTriggered)
                 {
                     transform.GetComponent<Rigidbody2D>().simulated = false;
                     Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
@@ -64,8 +68,8 @@ namespace Assets.TapTapAim
 
         public bool IsInCircleLifeBound(TimeSpan time)
         {
-            if (time >= VisibleStartStart
-                && time <= VisibleEndStart)
+            if (time >= Visibility.VisibleStartStart
+                && time <= Visibility.VisibleEndStart)
             {
                 return true;
             }
@@ -117,7 +121,7 @@ namespace Assets.TapTapAim
                     Outcome(hitTime, false);
                 }
 
-            
+
                 StartCoroutine(FadeOut());
             }
         }
@@ -126,7 +130,7 @@ namespace Assets.TapTapAim
 
         IEnumerator TimingRingShrink()
         {
-            fadeInTriggered = true;
+            Visibility.fadeInTriggered = true;
             float elapsedTime = 0.0f;
 
             while (elapsedTime < 1)
@@ -146,10 +150,10 @@ namespace Assets.TapTapAim
         }
         IEnumerator FadeIn()
         {
-            fadeInTriggered = true;
+            Visibility.fadeInTriggered = true;
             float elapsedTime = 0.0f;
 
-            while (elapsedTime < 1 != fadeOutTriggered)
+            while (elapsedTime < 1 != Visibility.fadeOutTriggered)
             {
                 yield return instruction;
                 elapsedTime += Time.deltaTime;
@@ -158,7 +162,7 @@ namespace Assets.TapTapAim
         }
         IEnumerator FadeOut()
         {
-            fadeOutTriggered = true;
+            Visibility.fadeOutTriggered = true;
             float elapsedTime = 0.0f;
 
             while (elapsedTime < 1)

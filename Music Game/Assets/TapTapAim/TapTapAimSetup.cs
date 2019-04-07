@@ -17,26 +17,31 @@ namespace Assets.TapTapAim
         public Transform Slider;
         public Transform SliderPositionRing;
         public Transform SliderHitCircleTransform;
+        /// <summary>
+        /// set a window of how innaccurate a hit can be to still be count as perfect
+        /// </summary>
         public static int AccuracyLaybackMs { get; } = 100;
         public Transform PlayArea { get; set; }
         public List<IObject> HitObjectQueue { get; } = new List<IObject>();
-        public List<IQueuable> ObjToActivateQueue { get; } = new List<IQueuable>();
+        public List<IQueuable> ObjActivationQueue { get; } = new List<IQueuable>();
         public ITracker Tracker { get; set; }
 
-        private bool ready;
-        private int offset = 4000;
+        private bool Ready { get; set; }
+        /// <summary>
+        /// offset for start of map to give player some time to get ready
+        /// </summary>
+        private int Offset { get; set; }= 4000;
         private bool AddOffset { get; set; }
 
         public AudioSource MusicSource { get; set; }
 
         public AudioSource HitSource { get; set; }
-        private int prevGroupID { get; set; } = -1;
-        private int groupIDCount { get; set; } = 0;
+        private int PrevGroupID { get; set; } = -1;
+        private int GroupIDCount { get; set; } = 0;
 
 
-        private bool showSliders = true;
-        private bool showCircles = false;
-        private int queueID = -1;
+        private bool showSliders { get; set; } = false;
+        private bool showCircles { get; set; } = true;
         private int HitID { get; set; } = -1;
 
         void Start()
@@ -49,10 +54,10 @@ namespace Assets.TapTapAim
             Tracker.TapTapAimSetup = this;
 
             if (TimeSpan.FromMilliseconds(int.Parse(GameStartParameters.MapJson.map[0].Split(',')[2])) <
-                TimeSpan.FromMilliseconds(offset))
+                TimeSpan.FromMilliseconds(Offset))
             {
                 AddOffset = true;
-                Tracker.StartOffset = offset;
+                Tracker.StartOffset = Offset;
             }
 
             InstantiateObjects();
@@ -81,10 +86,10 @@ namespace Assets.TapTapAim
                     {
                         var circle = CreateHitCircle(index, hitObject);
                         circle.HitID = GetHitID();
-                        ObjToActivateQueue.Add(circle);
+                        ObjActivationQueue.Add(circle);
                         HitObjectQueue.Add(circle);
-                        circle.name = ObjToActivateQueue.Count -1 + "-HitCircle";
-                        circle.QueueID = ObjToActivateQueue.Count - 1;
+                        circle.name = ObjActivationQueue.Count -1 + "-HitCircle";
+                        circle.QueueID = ObjActivationQueue.Count - 1;
                     }
                 }
                 else
@@ -96,10 +101,10 @@ namespace Assets.TapTapAim
                         if (slider != null)
                         {
                             //HitObjectQueue.Add(slider);
-                            ObjToActivateQueue.Add(slider);
-                            slider.QueueID = ((SliderHitCircle)slider.InitialHitCircle).QueueID = ObjToActivateQueue.Count - 1;
+                            ObjActivationQueue.Add(slider);
+                            slider.QueueID = ((SliderHitCircle)slider.InitialHitCircle).QueueID = ObjActivationQueue.Count - 1;
                             slider.InitialHitCircle.HitID = GetHitID();
-                            slider.name = ObjToActivateQueue.Count -1 + "-HitSlider";
+                            slider.name = ObjActivationQueue.Count -1 + "-HitSlider";
                             //slider.SliderPositionRing.HitID = GetHitID();
                             HitObjectQueue.Add(slider.InitialHitCircle);
 
@@ -109,15 +114,15 @@ namespace Assets.TapTapAim
                 }
             }
 
-            for (int i = 0; i < ObjToActivateQueue.Count; i++)
+            for (int i = 0; i < ObjActivationQueue.Count; i++)
             {
-                ObjToActivateQueue[i].QueueID = i;
+                ObjActivationQueue[i].QueueID = i;
             }
 
             var count = 0;
-            for (int i = ObjToActivateQueue.Count - 1; i >= 0; i--)
+            for (int i = ObjActivationQueue.Count - 1; i >= 0; i--)
             {
-                ((MonoBehaviour)ObjToActivateQueue[i]).transform.SetSiblingIndex(count);
+                ((MonoBehaviour)ObjActivationQueue[i]).transform.SetSiblingIndex(count);
                 count++;
             }
             Tracker.SetGameReady();
@@ -142,14 +147,14 @@ namespace Assets.TapTapAim
 
             instance.transform.localScale = new Vector2(1f, 1f);
 
-            if (format.group == prevGroupID)
+            if (format.group == PrevGroupID)
             {
-                instance.Number = groupIDCount += 1;
+                instance.Number = GroupIDCount += 1;
             }
             else
             {
-                prevGroupID = format.group;
-                instance.Number = groupIDCount = 1;
+                PrevGroupID = format.group;
+                instance.Number = GroupIDCount = 1;
             }
 
             var circleFormat = new CircleFormat
@@ -196,7 +201,7 @@ namespace Assets.TapTapAim
 
         private TimeSpan GetPerfectTime(Format format)
         {
-            return TimeSpan.FromMilliseconds(format.time + (AddOffset ? offset : 0));
+            return TimeSpan.FromMilliseconds(format.time + (AddOffset ? Offset : 0));
         }
 
         private HitCircle CreateHitCircle(int index, string[] hitObject)
@@ -205,14 +210,14 @@ namespace Assets.TapTapAim
             instance.TapTapAimSetup = this;
 
             var format = new CircleFormat(hitObject);
-            if (format.group == prevGroupID)
+            if (format.group == PrevGroupID)
             {
-                instance.Number = groupIDCount += 1;
+                instance.GroupNumberShownOnCircle = GroupIDCount += 1;
             }
             else
             {
-                prevGroupID = format.group;
-                instance.Number = groupIDCount = 1;
+                PrevGroupID = format.group;
+                instance.GroupNumberShownOnCircle = GroupIDCount = 1;
             }
             instance.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
             instance.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
@@ -231,7 +236,7 @@ namespace Assets.TapTapAim
 
 
             instance.name = "Hit Circle";
-            instance.Number = groupIDCount;
+            instance.Number = GroupIDCount;
 
             instance.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
             instance.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);

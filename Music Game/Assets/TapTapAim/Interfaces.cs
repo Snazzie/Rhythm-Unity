@@ -15,7 +15,7 @@ namespace Assets.TapTapAim
         AudioSource HitSource { get; }
         Transform PlayArea { get; set; }
         List<IObject> HitObjectQueue { get; }
-        List<IQueuable> ObjToActivateQueue { get; }
+        List<IQueuable> ObjActivationQueue { get; }
     }
     public interface ITracker
     {
@@ -39,12 +39,8 @@ namespace Assets.TapTapAim
     public interface IObject
     {
         ITapTapAimSetup TapTapAimSetup { get; set; }
-        int VisibleStartOffsetMs { get; }
-        int VisibleEndOffsetMs { get; }
-        TimeSpan VisibleStartStart { get; }
-        TimeSpan VisibleEndStart { get; }
+        Visibility Visibility { get; set; }
     }
-
     public interface ICircle : IObject
     {
     }
@@ -53,8 +49,6 @@ namespace Assets.TapTapAim
     {
         int HitID { get; set; }
         TimeSpan PerfectHitTime { get; set; }
-
-
         int AccuracyLaybackMs { get; set; }
 
     }
@@ -62,7 +56,7 @@ namespace Assets.TapTapAim
     public interface IHitCircle : ICircle, IHittable, IQueuable
     {
         void TryHit();
-        int Number { get; set; }
+        int GroupNumberShownOnCircle { get; set; }
         bool IsHitAttempted { get; }
     }
 

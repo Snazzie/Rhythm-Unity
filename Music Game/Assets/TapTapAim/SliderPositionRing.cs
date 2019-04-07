@@ -19,5 +19,6 @@ namespace Assets.TapTapAim
         public int HitID { get; set; }
         public TimeSpan PerfectHitTime { get; set; }
         public int AccuracyLaybackMs { get; set; }
+        public Visibility Visibility { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
