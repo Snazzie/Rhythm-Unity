@@ -7,7 +7,7 @@ namespace Assets.TapTapAim
 {
     public class HitCircle : MonoBehaviour, IHitCircle
     {
-        public ITapTapAimSetup TapTapAimSetup { get; set; }
+        public TapTapAimSetup TapTapAimSetup { get; set; }
         public int HitID { get; set; }
         public int QueueID { get; set; }
         public TimeSpan PerfectHitTime { get; set; }

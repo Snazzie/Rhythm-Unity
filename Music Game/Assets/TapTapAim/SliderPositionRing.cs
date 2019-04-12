@@ -5,7 +5,7 @@ namespace Assets.TapTapAim
 {
     public class SliderPositionRing : MonoBehaviour, ISliderPositionRing
     {
-        public ITapTapAimSetup TapTapAimSetup { get; set; }
+        public TapTapAimSetup TapTapAimSetup { get; set; }
         public int VisibleStartOffsetMs { get; }
         public int VisibleEndOffsetMs { get; }
         public TimeSpan VisibleStartStart { get; }

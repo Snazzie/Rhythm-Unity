@@ -13,6 +13,7 @@ namespace Assets.TapTapAim
         public float SliderSpeed { get; set; } = 1f;
         public void DrawSlider()
         {
+            LineRenderer.positionCount = 0; // clear existing positions from edit demo
             LineRenderer.positionCount = Points.Count;
             var pointsArry = Points.ToArray();
             LineRenderer.SetPositions(pointsArry);

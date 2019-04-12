@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Assets.TapTapAim
         AudioSource MusicSource { get; }
         AudioSource HitSource { get; }
         Transform PlayArea { get; set; }
-        List<IObject> HitObjectQueue { get; }
+        List<IHittable> HitObjectQueue { get; }
         List<IQueuable> ObjActivationQueue { get; }
     }
     public interface ITracker
@@ -29,41 +29,42 @@ namespace Assets.TapTapAim
         void RecordEvent(bool hit, HitScore hitScore = null);
         void SetGameReady();
 
-        ITapTapAimSetup TapTapAimSetup { get; set; }
+        TapTapAimSetup TapTapAimSetup { get; set; }
     }
 
-    public interface IQueuable
+    public interface IQueuable: IObject
     {
         int QueueID { get; set; }
     }
     public interface IObject
     {
-        ITapTapAimSetup TapTapAimSetup { get; set; }
+        TapTapAimSetup TapTapAimSetup { get; set; }
         Visibility Visibility { get; set; }
     }
     public interface ICircle : IObject
     {
     }
 
-    public interface IHittable
+    public interface IHittable : IObject
     {
         int HitID { get; set; }
+        void TryHit();
         TimeSpan PerfectHitTime { get; set; }
         int AccuracyLaybackMs { get; set; }
-
-    }
-
-    public interface IHitCircle : ICircle, IHittable, IQueuable
-    {
-        void TryHit();
-        int GroupNumberShownOnCircle { get; set; }
         bool IsHitAttempted { get; }
     }
 
-    public interface ISliderHitCircle : ICircle, IHittable
-    {
+    public interface IHitCircle : ICircle, IHittable, IQueuable,IDisplaysGroupNumber{}
 
+    public interface ISliderHitCircle : ICircle, IHittable, IDisplaysGroupNumber
+    {
+        event EventHandler OnHitOrShowSliderTimingCircleEvent;
     }
+    public interface IDisplaysGroupNumber
+    {
+        int GroupNumberShownOnCircle { get; set; }
+    }
+
     public interface ISlider
     {
 

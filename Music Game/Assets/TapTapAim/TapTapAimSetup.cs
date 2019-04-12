@@ -22,7 +22,7 @@ namespace Assets.TapTapAim
         /// </summary>
         public static int AccuracyLaybackMs { get; } = 100;
         public Transform PlayArea { get; set; }
-        public List<IObject> HitObjectQueue { get; } = new List<IObject>();
+        public List<IHittable> HitObjectQueue { get; } = new List<IHittable>();
         public List<IQueuable> ObjActivationQueue { get; } = new List<IQueuable>();
         public ITracker Tracker { get; set; }
 
@@ -30,7 +30,7 @@ namespace Assets.TapTapAim
         /// <summary>
         /// offset for start of map to give player some time to get ready
         /// </summary>
-        private int Offset { get; set; }= 4000;
+        public int Offset { get; private set; }= 4000;
         private bool AddOffset { get; set; }
 
         public AudioSource MusicSource { get; set; }
@@ -40,10 +40,9 @@ namespace Assets.TapTapAim
         private int GroupIDCount { get; set; } = 0;
 
 
-        private bool showSliders { get; set; } = false;
-        private bool showCircles { get; set; } = true;
+        private bool showSliders { get; set; } = true;
+        private bool showCircles { get; set; } = false;
         private int HitID { get; set; } = -1;
-
         void Start()
         {
             PlayArea = GameObject.Find("PlayArea").transform;
@@ -236,7 +235,7 @@ namespace Assets.TapTapAim
 
 
             instance.name = "Hit Circle";
-            instance.Number = GroupIDCount;
+            instance.GroupNumberShownOnCircle = GroupIDCount;
 
             instance.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
             instance.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);

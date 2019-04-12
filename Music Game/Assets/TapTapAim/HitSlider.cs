@@ -15,9 +15,7 @@ namespace Assets.TapTapAim
         public TimeSpan PerfectHitTime { get; set; }
         public int VisibleStartOffsetMs { get; } = 400;
         public int VisibleEndOffsetMs { get; } = 50;
-        public TimeSpan VisibleStartStart { get; set; }
-        public TimeSpan VisibleEndStart { get; set; }
-        public ITapTapAimSetup TapTapAimSetup { get; set; }
+        public TapTapAimSetup TapTapAimSetup { get; set; }
         public ISliderHitCircle InitialHitCircle { get; set; }
         public ISliderPositionRing SliderPositionRing { get; set; }
         public ISlider Slider { get; set; }
@@ -51,15 +49,15 @@ namespace Assets.TapTapAim
                 VisibleEndOffsetMs = 50
             };
 
-            VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-            VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+            Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
+            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
             gameObject.SetActive(false);
         }
 
         void Update()
         {
 
-            if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleStartStart)
+            if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
             {
                 ((MonoBehaviour)InitialHitCircle).enabled = true;
                 ((MonoBehaviour)InitialHitCircle).gameObject.SetActive(true);
@@ -67,12 +65,7 @@ namespace Assets.TapTapAim
 
             }
 
-            if (IsInAutoPlayHitBound(TapTapAimSetup.Tracker.Stopwatch.Elapsed))
-            {
-
-            }
-
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleEndStart && !fadeOutTriggered)
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleEndStart && !fadeOutTriggered)
             {
                 Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
                 StartCoroutine(FadeOut());
@@ -182,35 +175,7 @@ namespace Assets.TapTapAim
             }
 
         }
-       
 
-        public bool IsInCircleLifeBound(TimeSpan time)
-        {
-            if (time >= VisibleStartStart
-                && time <= VisibleEndStart)
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool IsInHitBound(TimeSpan time)
-        {
-            if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs)
-                && time <= PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool IsInAutoPlayHitBound(TimeSpan time)
-        {
-            if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(20)
-                && time <= PerfectHitTime + TimeSpan.FromMilliseconds(20))
-            {
-                return true;
-            }
-            return false;
-        }
 
         public void HideCircle()
         {
