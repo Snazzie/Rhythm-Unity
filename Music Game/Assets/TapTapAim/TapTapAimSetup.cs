@@ -17,6 +17,12 @@ namespace Assets.TapTapAim
         public Transform Slider;
         public Transform SliderPositionRing;
         public Transform SliderHitCircleTransform;
+        public Transform BlankCircle;
+
+        private bool showSliders { get; } = true;
+        private bool showCircles { get; } = true;
+
+
         /// <summary>
         /// set a window of how innaccurate a hit can be to still be count as perfect
         /// </summary>
@@ -30,7 +36,7 @@ namespace Assets.TapTapAim
         /// <summary>
         /// offset for start of map to give player some time to get ready
         /// </summary>
-        public int Offset { get; private set; }= 4000;
+        public int Offset { get; private set; } = 4000;
         private bool AddOffset { get; set; }
 
         public AudioSource MusicSource { get; set; }
@@ -39,9 +45,6 @@ namespace Assets.TapTapAim
         private int PrevGroupID { get; set; } = -1;
         private int GroupIDCount { get; set; } = 0;
 
-
-        private bool showSliders { get; set; } = true;
-        private bool showCircles { get; set; } = false;
         private int HitID { get; set; } = -1;
         void Start()
         {
@@ -87,7 +90,8 @@ namespace Assets.TapTapAim
                         circle.HitID = GetHitID();
                         ObjActivationQueue.Add(circle);
                         HitObjectQueue.Add(circle);
-                        circle.name = ObjActivationQueue.Count -1 + "-HitCircle";
+
+                        circle.name = ObjActivationQueue.Count - 1 + "-HitCircle";
                         circle.QueueID = ObjActivationQueue.Count - 1;
                     }
                 }
@@ -103,9 +107,11 @@ namespace Assets.TapTapAim
                             ObjActivationQueue.Add(slider);
                             slider.QueueID = ((SliderHitCircle)slider.InitialHitCircle).QueueID = ObjActivationQueue.Count - 1;
                             slider.InitialHitCircle.HitID = GetHitID();
-                            slider.name = ObjActivationQueue.Count -1 + "-HitSlider";
-                            //slider.SliderPositionRing.HitID = GetHitID();
                             HitObjectQueue.Add(slider.InitialHitCircle);
+
+                            slider.name = ObjActivationQueue.Count - 1 + "-HitSlider";
+                            //slider.SliderPositionRing.HitID = GetHitID();
+                            
 
                             //HitObjectQueue.Add(slider.SliderPositionRing);
                         }
@@ -138,7 +144,7 @@ namespace Assets.TapTapAim
             var instance = Instantiate(HitSliderTransform, PlayArea).GetComponent<HitSlider>();
 
             instance.TapTapAimSetup = this;
-            
+
             instance.transform.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
             instance.GetComponent<RectTransform>().sizeDelta = new Vector3(0, 0, -0.1f);
             instance.GetComponent<RectTransform>().anchorMin = new Vector2(0f, 0f);
@@ -165,27 +171,14 @@ namespace Assets.TapTapAim
             };
 
             var sliderHitcircleInstance = CreateSliderHitCircle(circleFormat);
-            sliderHitcircleInstance.transform.parent = instance.transform;
+            sliderHitcircleInstance.transform.SetParent(instance.transform);
             sliderHitcircleInstance.name = "SliderHitCircle";
 
             var sliderPositionRingInstance = Instantiate(SliderPositionRing, instance.transform).GetComponent<SliderPositionRing>();
             sliderPositionRingInstance.GetComponent<RectTransform>().position = sliderHitcircleInstance.GetComponent<RectTransform>().position;
 
             sliderPositionRingInstance.name = "SliderPositionRing";
-
-            var sliderInstance = Instantiate(
-                    Slider,
-                    transform
-                    ).GetComponent<Slider>();
-            sliderInstance.transform.parent = instance.transform;
-            sliderInstance.LineRenderer = instance.GetComponent<LineRenderer>();
-            sliderInstance.SliderPositionRing = sliderPositionRingInstance;
-            sliderInstance.Points = format.points;
-            sliderInstance.SliderType = format.type;
-            sliderInstance.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
-            sliderInstance.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
-            sliderInstance.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-            sliderInstance.DrawSlider();
+            Slider sliderInstance = NewSliderInstance(format, instance, sliderPositionRingInstance);
 
             instance.SetUp(
                 sliderHitcircleInstance,
@@ -196,6 +189,21 @@ namespace Assets.TapTapAim
 
             return instance;
 
+        }
+
+        private Slider NewSliderInstance(SliderFormat format, HitSlider instance, SliderPositionRing sliderPositionRingInstance)
+        {
+            var sliderInstance = Instantiate(Slider,transform).GetComponent<Slider>();
+            sliderInstance.transform.SetParent(instance.transform);
+            sliderInstance.LineRenderer = instance.GetComponent<LineRenderer>();
+            sliderInstance.SliderPositionRing = sliderPositionRingInstance;
+            sliderInstance.Points = format.points;
+            sliderInstance.SliderType = format.type;
+            sliderInstance.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
+            sliderInstance.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+            sliderInstance.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
+            sliderInstance.DrawSlider();
+            return sliderInstance;
         }
 
         private TimeSpan GetPerfectTime(Format format)
@@ -305,9 +313,8 @@ namespace Assets.TapTapAim
                         points = LinearLine.GetPoints(new Vector2(x, y), vectors[0]);
                         break;
                     case "P":
-                    //type = SliderType.PerfectCurve;
-                    ////
-                    //break;
+                        //type = SliderType.PerfectCurve;
+                        //break;
                     case "B":
                         type = SliderType.BezierCurve;
                         var list = new List<Vector3>(vectors);

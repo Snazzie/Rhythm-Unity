@@ -19,25 +19,25 @@ namespace Assets.TapTapAim
             public int QueueID { get; set; }
             public int HitID { get; set; }
             public TimeSpan PerfectHitTime { get; set; }
+
             public bool IsHitAttempted { get; private set; } = false;
-            public int VisibleStartOffsetMs { get; } = 400;
-            public int VisibleEndOffsetMs { get; } = 100;
             public int AccuracyLaybackMs { get; set; } = 100;
             public int GroupNumberShownOnCircle { get; set; }
             public event EventHandler OnHitOrShowSliderTimingCircleEvent;
             private bool StopCalculating;
-            public Visibility Visibility { get; set; } = new Visibility()
-            {
-                VisibleStartOffsetMs = 400,
-                VisibleEndOffsetMs = 50
-            };
+
+            public HitSlider ParentSlider { get; set; }
+            public Visibility Visibility { get; set; }
+
+            public TimeSpan HitBoundStart { get; set; }
+
+            public TimeSpan HitBoundEnd { get; set; }
 
             private YieldInstruction instruction = new YieldInstruction();
 
             public void Disappear()
             {
-
-                transform.parent.GetComponent<HitSlider>().HideCircle();
+                gameObject.SetActive(false);
             }
 
             // Use this for initialization
@@ -48,23 +48,33 @@ namespace Assets.TapTapAim
                 TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
                 transform.GetChild(1).GetComponent<Text>().text = GroupNumberShownOnCircle.ToString();
 
-                Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-                Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
-                OnHitOrShowSliderTimingCircleEvent += SliderHitCircle_OnHitOrShowSliderTimingCircleEvent;  
+                HitBoundStart = PerfectHitTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs);
+                HitBoundEnd = PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs);
+
+                Visibility = new Visibility()
+                {
+                    VisibleStartOffsetMs = 400,
+                    VisibleEndOffsetMs = 50
+                };
+                Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(Visibility.VisibleStartOffsetMs);
+                Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
+                OnHitOrShowSliderTimingCircleEvent += SliderHitCircle_OnHitOrShowSliderTimingCircleEvent;
                 gameObject.SetActive(false);
             }
 
             private void SliderHitCircle_OnHitOrShowSliderTimingCircleEvent(object sender, EventArgs e)
             {
-               ((Tracker)TapTapAimSetup.Tracker).IterateHitQueue(HitID);
+                IsHitAttempted = true;
+                ((Tracker)TapTapAimSetup.Tracker).IterateHitQueue(HitID);
+
                 //throw new NotImplementedException();
             }
 
             void Update()
             {
-                if (!IsHitAttempted && !StopCalculating)
+                if (!IsHitAttempted)
                 {
-                    if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
+                    if (ParentSlider.fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
                     {
 
                         StartCoroutine(TimingRingShrink());
@@ -72,11 +82,8 @@ namespace Assets.TapTapAim
 
                     if (IsInHitBound(TapTapAimSetup.Tracker.Stopwatch.Elapsed))
                     {
-                        //if (TapTapAimSetup.Tracker.NextObjToHit < HitID)
-                        //    TapTapAimSetup.Tracker.NextObjToHit = HitID;
                         transform.GetComponent<Rigidbody2D>().simulated = true;
                         transform.GetComponent<CircleCollider2D>().enabled = true;
-
                     }
 
 
@@ -84,15 +91,15 @@ namespace Assets.TapTapAim
                     {
                         transform.GetComponent<Rigidbody2D>().simulated = false;
                         transform.GetComponent<CircleCollider2D>().enabled = false;
-                        //Disappear();
+                        
 
                         Debug.LogError($" HitId:{HitID} Not hit attempted.  next hit id: {TapTapAimSetup.Tracker.NextObjToHit}");
                         Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
-                        StopCalculating = true;
+                        Disappear();
                     }
                 }
             }
-            
+
             public bool IsInCircleLifeBound()
             {
                 var time = TapTapAimSetup.Tracker.Stopwatch.Elapsed;
@@ -120,8 +127,7 @@ namespace Assets.TapTapAim
             }
             public bool IsInAutoPlayHitBound(TimeSpan time)
             {
-                if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(20)
-                    && time <= PerfectHitTime + TimeSpan.FromMilliseconds(20))
+                if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(20) && time <= PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
                 {
                     return true;
                 }
@@ -133,21 +139,18 @@ namespace Assets.TapTapAim
                 TimeSpan hitTime = TapTapAimSetup.Tracker.Stopwatch.Elapsed;
                 if (!IsHitAttempted)
                 {
-
-
                     Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectHitTime + "   IsInBounds:" +
                               IsInHitBound(hitTime));
-                    var nextHitID = TapTapAimSetup.Tracker.NextObjToHit;
-                    //if (HitID == nextHitID)
-                    //{
-                        OnHitOrShowSliderTimingCircleEvent(this, null);
-                        IsHitAttempted = true;
+                    if (HitID == TapTapAimSetup.Tracker.NextObjToHit)
+                    {
+
                         transform.GetComponent<Rigidbody2D>().simulated = false;
                         transform.GetComponent<CircleCollider2D>().enabled = false;
 
 
                         if (IsInHitBound(hitTime))
                         {
+                            OnHitOrShowSliderTimingCircleEvent.Invoke(this, null);
                             TapTapAimSetup.HitSource.Play();
                             Outcome(hitTime, true);
                         }
@@ -156,11 +159,8 @@ namespace Assets.TapTapAim
                             Debug.LogError($" HitId:{HitID} Hit attempted but missed. Time difference: {hitTime - PerfectHitTime}ms");
                             Outcome(hitTime, false);
                         }
-                    //}
-                    //else
-                    //{
-                    //    Debug.LogError($" HitId:{HitID} Hit attempted but it is not next hit id: {nextHitID}. Time difference: {hitTime - PerfectHitTime}ms");
-                    //}
+                    }
+
                 }
                 else
                 {

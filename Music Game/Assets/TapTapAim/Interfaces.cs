@@ -25,7 +25,7 @@ namespace Assets.TapTapAim
         bool GameFinished { get; }
         Stopwatch Stopwatch { get; }
         int StartOffset { get; set; }
-        int NextObjToHit { get; set; }
+        int NextObjToHit { get; }
         void RecordEvent(bool hit, HitScore hitScore = null);
         void SetGameReady();
 
@@ -52,6 +52,9 @@ namespace Assets.TapTapAim
         TimeSpan PerfectHitTime { get; set; }
         int AccuracyLaybackMs { get; set; }
         bool IsHitAttempted { get; }
+        TimeSpan HitBoundStart { get; }
+        TimeSpan HitBoundEnd { get; }
+        bool IsInHitBound(TimeSpan time);
     }
 
     public interface IHitCircle : ICircle, IHittable, IQueuable,IDisplaysGroupNumber{}

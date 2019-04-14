@@ -16,6 +16,7 @@ namespace Assets.TapTapAim
         public int VisibleStartOffsetMs { get; } = 400;
         public int VisibleEndOffsetMs { get; } = 50;
         public TapTapAimSetup TapTapAimSetup { get; set; }
+        public ICircle BlankCircle { get; set; }
         public ISliderHitCircle InitialHitCircle { get; set; }
         public ISliderPositionRing SliderPositionRing { get; set; }
         public ISlider Slider { get; set; }
@@ -34,6 +35,7 @@ namespace Assets.TapTapAim
         public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, TimeSpan perfectHitTime, int bounces, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
+            ((SliderHitCircle) InitialHitCircle).ParentSlider = this;
             Slider = slider;
             SliderPositionRing = sliderPositionRing;
             PerfectHitTime = perfectHitTime;
@@ -46,7 +48,7 @@ namespace Assets.TapTapAim
             Visibility = new Visibility()
             {
                 VisibleStartOffsetMs = 400,
-                VisibleEndOffsetMs = 50
+                VisibleEndOffsetMs = 100
             };
 
             Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
@@ -111,7 +113,7 @@ namespace Assets.TapTapAim
         }
         private void Outcome(TimeSpan time, bool hit)
         {
-            
+
             // gameObject.SetActive(false);
             Destroy(gameObject, 3);
         }

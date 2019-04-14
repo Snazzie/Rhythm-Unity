@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Assets.Scripts;
@@ -10,7 +10,7 @@ namespace Assets.TapTapAim
 {
     public class Tracker : MonoBehaviour, ITracker
     {
-        private int nextObjectID;
+        private int nextObjectID { get; set; }
         private bool SkippedToStart;
         public TapTapAimSetup TapTapAimSetup { get; set; }
         public int Score { get; private set; }
@@ -47,21 +47,22 @@ namespace Assets.TapTapAim
                 return;
             try
             {
-                if(NextObjToActivateID < TapTapAimSetup.ObjActivationQueue.Count)
-                IterateObjectQueue();
+                if (NextObjToActivateID < TapTapAimSetup.ObjActivationQueue.Count)
+                    IterateObjectQueue();
             }
-            catch 
+            catch
             {
                 //Debug.LogError(exception);
             }
 
             try
             {
-                IterateHitQueue();
+                if (NextObjToHit < TapTapAimSetup.HitObjectQueue.Count)
+                    IterateHitQueue();
             }
-            catch
+            catch (Exception e)
             {
-
+                Debug.LogError(e);
             }
             if (IsGameReady && OffsetOver() && !GameFinished)
             {
@@ -80,7 +81,7 @@ namespace Assets.TapTapAim
                     TapTapAimSetup.HitObjectQueue[0].Visibility.VisibleStartStart && !SkippedToStart)
                 {
                     SkippedToStart = true;
-                    TapTapAimSetup.MusicSource.time = (float)((IObject)TapTapAimSetup.HitObjectQueue[0]).Visibility.VisibleStartStart.TotalSeconds - 5f;
+                    TapTapAimSetup.MusicSource.time = (float)TapTapAimSetup.HitObjectQueue[0].Visibility.VisibleStartStart.TotalSeconds - 5f;
                 }
 
         }
@@ -115,7 +116,7 @@ namespace Assets.TapTapAim
 
         private TimeSpan TimeNormalized()
         {
-          return TapTapAimSetup.Offset != 0 ? Stopwatch.Elapsed - TimeSpan.FromMilliseconds(TapTapAimSetup.Offset) : Stopwatch.Elapsed;
+            return TapTapAimSetup.Offset != 0 ? Stopwatch.Elapsed - TimeSpan.FromMilliseconds(TapTapAimSetup.Offset) : Stopwatch.Elapsed;
         }
         private void IterateObjectQueue()
         {
@@ -124,7 +125,7 @@ namespace Assets.TapTapAim
             //    ((MonoBehaviour)TapTapAimSetup.HitObjectQueue[nextObjectID]).gameObject.SetActive(true);
             //    nextObjectID++;
             //}
-            if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(1000) >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStart)
+            if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(200) >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStart)
             {
                 ((MonoBehaviour)(TapTapAimSetup).ObjActivationQueue[NextObjToActivateID]).gameObject.SetActive(true);
                 NextObjToActivateID++;
@@ -138,13 +139,15 @@ namespace Assets.TapTapAim
         {
             if (thisId != null)
             {
-                NextObjToHit= (int)thisId + 1;
+                NextObjToHit = (int)thisId + 1;
+                Debug.Log($"set nextHitObj to:{NextObjToHit}");
                 return;
             }
-            if (Stopwatch.Elapsed >= (TapTapAimSetup.HitObjectQueue[NextObjToHit]).PerfectHitTime + TimeSpan.FromMilliseconds(TapTapAimSetup.AccuracyLaybackMs))
-            {
-                NextObjToHit++;
-            }
+            //if (Stopwatch.Elapsed >= (TapTapAimSetup.HitObjectQueue[NextObjToHit]).PerfectHitTime + TimeSpan.FromMilliseconds(TapTapAimSetup.AccuracyLaybackMs))
+            //{
+            //    NextObjToHit++;
+            //    Debug.Log($"iterate hitQueue to:{NextObjToHit}");
+            //}
         }
 
 
