@@ -5,8 +5,6 @@ There are tests maps bundled with this project using LFS. make sure you pull fro
 
 Only auto play works atm.
 
-Sliders currently do not work correctly. disable show sliders or whatever its called in  tap tap setup file if you want to see auto play hit every circle.
-
 Feature Goals:
 
 * Ability to import maps from OSU
