@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,8 +14,8 @@ namespace Assets.TapTapAim
         AudioSource MusicSource { get; }
         AudioSource HitSource { get; }
         Transform PlayArea { get; set; }
-        List<IObject> HitObjectQueue { get; }
-        List<IQueuable> ObjToActivateQueue { get; }
+        List<IHittable> HitObjectQueue { get; }
+        List<IQueuable> ObjActivationQueue { get; }
     }
     public interface ITracker
     {
@@ -25,51 +25,49 @@ namespace Assets.TapTapAim
         bool GameFinished { get; }
         Stopwatch Stopwatch { get; }
         int StartOffset { get; set; }
-        int NextObjToHit { get; set; }
+        int NextObjToHit { get; }
         void RecordEvent(bool hit, HitScore hitScore = null);
         void SetGameReady();
 
-        ITapTapAimSetup TapTapAimSetup { get; set; }
+        TapTapAimSetup TapTapAimSetup { get; set; }
     }
 
-    public interface IQueuable
+    public interface IQueuable: IObject
     {
         int QueueID { get; set; }
     }
     public interface IObject
     {
-        ITapTapAimSetup TapTapAimSetup { get; set; }
-        int VisibleStartOffsetMs { get; }
-        int VisibleEndOffsetMs { get; }
-        TimeSpan VisibleStartStart { get; }
-        TimeSpan VisibleEndStart { get; }
+        TapTapAimSetup TapTapAimSetup { get; set; }
+        Visibility Visibility { get; set; }
     }
-
     public interface ICircle : IObject
     {
     }
 
-    public interface IHittable
+    public interface IHittable : IObject
     {
         int HitID { get; set; }
-        TimeSpan PerfectHitTime { get; set; }
-
-
-        int AccuracyLaybackMs { get; set; }
-
-    }
-
-    public interface IHitCircle : ICircle, IHittable, IQueuable
-    {
         void TryHit();
-        int Number { get; set; }
+        TimeSpan PerfectHitTime { get; set; }
+        int AccuracyLaybackMs { get; set; }
         bool IsHitAttempted { get; }
+        TimeSpan HitBoundStart { get; }
+        TimeSpan HitBoundEnd { get; }
+        bool IsInHitBound(TimeSpan time);
     }
 
-    public interface ISliderHitCircle : ICircle, IHittable
+    public interface IHitCircle : ICircle, IHittable, IQueuable,IDisplaysGroupNumber{}
+
+    public interface ISliderHitCircle : ICircle, IHittable, IDisplaysGroupNumber
     {
-
+        event EventHandler OnHitOrShowSliderTimingCircleEvent;
     }
+    public interface IDisplaysGroupNumber
+    {
+        int GroupNumberShownOnCircle { get; set; }
+    }
+
     public interface ISlider
     {
 
@@ -77,12 +75,16 @@ namespace Assets.TapTapAim
         SliderType SliderType { get; }
     }
 
-    public interface ISliderPositionRing : IObject, IHittable
+    public interface ISliderPositionRing : IObject, IFollow
     {
 
     }
 
-    public interface IHitSlider : IObject, IHittable, IQueuable
+    public interface IFollow
+    {
+    }
+
+    public interface IHitSlider : IObject, IQueuable
     {
         int Number { get; set; }
 

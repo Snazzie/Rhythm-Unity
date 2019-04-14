@@ -11,12 +11,8 @@ namespace Assets.TapTapAim
     {
         public int QueueID { get; set; }
         public TimeSpan PerfectHitTime { get; set; }
-        public int VisibleStartOffsetMs { get; }
-        public int VisibleEndOffsetMs { get; }
-        public TimeSpan VisibleStartStart { get; }
-        public TimeSpan VisibleEndStart { get; }
-        public ITapTapAimSetup TapTapImAimSetup { get; set; }
         public int ID { get; set; }
-        public ITapTapAimSetup TapTapAimSetup { get; set; }
+        public TapTapAimSetup TapTapAimSetup { get; set; }
+        public Visibility Visibility { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }

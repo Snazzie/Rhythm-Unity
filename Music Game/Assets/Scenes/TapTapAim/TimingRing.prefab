@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 224499860562106224}
   - component: {fileID: 222430426767621402}
   - component: {fileID: 114811970483720000}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: TimingRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1150094657263294}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

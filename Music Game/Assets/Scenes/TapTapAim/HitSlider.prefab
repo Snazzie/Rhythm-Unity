@@ -55,7 +55,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1052314667971168}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: a6b1e479521431d4eaa8eecaad4b12c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -96,7 +95,12 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions: []
+  m_Positions:
+  - {x: 744.75494, y: 331.50165, z: 1881.5}
+  - {x: 698.79443, y: 347.47797, z: 1881.5}
+  - {x: 604.8749, y: 345.48093, z: 1881.5}
+  - {x: 598.88007, y: 273.58743, z: 1881.5}
+  - {x: 680.8098, y: 271.5904, z: 1881.5}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 9

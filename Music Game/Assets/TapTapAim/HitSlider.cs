@@ -12,13 +12,11 @@ namespace Assets.TapTapAim
     {
 
         public int QueueID { get; set; }
-        public int HitID { get; set; }
         public TimeSpan PerfectHitTime { get; set; }
         public int VisibleStartOffsetMs { get; } = 400;
         public int VisibleEndOffsetMs { get; } = 50;
-        public TimeSpan VisibleStartStart { get; set; }
-        public TimeSpan VisibleEndStart { get; set; }
-        public ITapTapAimSetup TapTapAimSetup { get; set; }
+        public TapTapAimSetup TapTapAimSetup { get; set; }
+        public ICircle BlankCircle { get; set; }
         public ISliderHitCircle InitialHitCircle { get; set; }
         public ISliderPositionRing SliderPositionRing { get; set; }
         public ISlider Slider { get; set; }
@@ -30,13 +28,14 @@ namespace Assets.TapTapAim
         public bool GoingForward { get; set; }
         public bool LookForward { get; set; }
         private bool Ready { get; set; }
-
+        public bool fadeInTriggered { get; set; }
         private float alpha = 0;
         public int AccuracyLaybackMs { get; set; } = 100;
 
         public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, TimeSpan perfectHitTime, int bounces, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
+            ((SliderHitCircle) InitialHitCircle).ParentSlider = this;
             Slider = slider;
             SliderPositionRing = sliderPositionRing;
             PerfectHitTime = perfectHitTime;
@@ -46,15 +45,21 @@ namespace Assets.TapTapAim
 
             TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             SetAlpha(alpha);
-            VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-            VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+            Visibility = new Visibility()
+            {
+                VisibleStartOffsetMs = 400,
+                VisibleEndOffsetMs = 100
+            };
+
+            Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
+            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
             gameObject.SetActive(false);
         }
 
         void Update()
         {
 
-            if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleStartStart)
+            if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
             {
                 ((MonoBehaviour)InitialHitCircle).enabled = true;
                 ((MonoBehaviour)InitialHitCircle).gameObject.SetActive(true);
@@ -62,12 +67,7 @@ namespace Assets.TapTapAim
 
             }
 
-            if (IsInAutoPlayHitBound(TapTapAimSetup.Tracker.Stopwatch.Elapsed))
-            {
-
-            }
-
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= VisibleEndStart && !fadeOutTriggered)
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleEndStart && !fadeOutTriggered)
             {
                 Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
                 StartCoroutine(FadeOut());
@@ -113,51 +113,9 @@ namespace Assets.TapTapAim
         }
         private void Outcome(TimeSpan time, bool hit)
         {
-            if (hit)
-            {
-                var difference = Math.Abs(time.TotalMilliseconds - PerfectHitTime.TotalMilliseconds);
-                int score;
-                if (difference <= 100)
-                {
-                    score = 100;
-                }
-                else if (difference <= 150)
-                {
-                    score = 50;
-                }
-                else
-                {
-                    score = 20;
-                }
 
-                var cs = new HitScore()
-                {
-                    id = QueueID,
-                    accuracy = GetAccuracy(difference),
-                    score = score
-                };
-                TapTapAimSetup.Tracker.RecordEvent(true, cs);
-            }
-            else
-            {
-                var cs = new HitScore()
-                {
-                    id = QueueID,
-                    accuracy = 0,
-                    score = 0
-                };
-                TapTapAimSetup.Tracker.RecordEvent(false, cs);
-                Debug.LogError(QueueID + "Failed to hit");
-            }
             // gameObject.SetActive(false);
             Destroy(gameObject, 3);
-        }
-        private float GetAccuracy(double difference)
-        {
-            if (difference <= 200)
-                return 100;
-
-            return 100 - ((float)difference) / 10;
         }
         private void SetAlpha(float alpha)
         {
@@ -204,6 +162,7 @@ namespace Assets.TapTapAim
         private YieldInstruction instruction = new YieldInstruction();
 
         public bool fadeOutTriggered { get; set; }
+        public Visibility Visibility { get; set; }
 
         IEnumerator FadeOut()
         {
@@ -218,39 +177,7 @@ namespace Assets.TapTapAim
             }
 
         }
-        public bool fadeInTriggered { get; set; }
 
-        void Start()
-        {
-        }
-
-        public bool IsInCircleLifeBound(TimeSpan time)
-        {
-            if (time >= VisibleStartStart
-                && time <= VisibleEndStart)
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool IsInHitBound(TimeSpan time)
-        {
-            if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs)
-                && time <= PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool IsInAutoPlayHitBound(TimeSpan time)
-        {
-            if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(20)
-                && time <= PerfectHitTime + TimeSpan.FromMilliseconds(20))
-            {
-                return true;
-            }
-            return false;
-        }
 
         public void HideCircle()
         {

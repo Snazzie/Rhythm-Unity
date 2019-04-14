@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.TapTapAim;
 using Assets.TapTapAim.Assets.TapTapAim;
@@ -21,10 +22,11 @@ namespace Assets
         private bool IsUserControl { get; set; }
         public bool IsGame { get; set; }
         private float Radius { get; set; }
+        private IHittable currentTarget { get; set; }
         // Start is called before the first frame update
         void Start()
         {
-
+            OnObject = null;
             IsAutoPlay = true;
             startPosition = new Vector3(0, 0, 0);
             IsGame = SceneManager.GetActiveScene().name == "TapTapAim";
@@ -47,10 +49,18 @@ namespace Assets
 
             if (IsGame)
             {
+                if (!(tapTapAimSetup.Tracker.NextObjToHit < tapTapAimSetup.HitObjectQueue.Count()))
+                    return;
                 var nextObj = ((MonoBehaviour)tapTapAimSetup.HitObjectQueue[tapTapAimSetup.Tracker.NextObjToHit]).transform;
-                Debug.Log("Next object to hit: " + ((IHittable)tapTapAimSetup.HitObjectQueue[tapTapAimSetup.Tracker.NextObjToHit]).HitID);
+                //Debug.Log("Next object to hit: " + ((IHittable)tapTapAimSetup.HitObjectQueue[tapTapAimSetup.Tracker.NextObjToHit]).HitID);
                 if (IsAutoPlay)
                 {
+                    var objTarget = nextObj.GetComponent<IHittable>();
+                    if (currentTarget != objTarget)
+                    {
+                        Debug.Log($"Cursor target = HitId:{objTarget.HitID}");
+                        currentTarget = objTarget;
+                    }
 
                     //pos.y += 0.1f;
                     SetDestination(nextObj.position, (nextObj.GetComponent<IHittable>().PerfectHitTime - tapTapAimSetup.Tracker.Stopwatch.Elapsed).TotalSeconds * Speed);
@@ -89,13 +99,18 @@ namespace Assets
             try
             {
                 var hits = Physics2D.CircleCastAll(transform.position, Radius, transform.forward, 5);
-                if (IsHittable(hits, out var type))
+                if (IsHittable(hits, out var type, out var hittable))
                 {
-                    Debug.Log("ontop of type: " + type);
-                    //Debug.Log("On Circle: " + hit.transform.name);
+                    if (OnObject != hittable)
+                    {
+                        Debug.Log($"ontop of {hittable.HitID} {((MonoBehaviour)hittable).name}");
+                        OnObject = hittable;
+                    }
+
                     if (IsAutoPlay)
                     {
-                        switch (OnObject)
+
+                        switch (hittable)
                         {
                             case HitCircle hitCircle:
                                 if (!hitCircle.IsHitAttempted && hitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
@@ -108,21 +123,21 @@ namespace Assets
                                 break;
 
                             case SliderHitCircle sliderHitCircle:
-                            {
-                                if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
                                 {
-                                    Debug.Log("Try hit: " + sliderHitCircle.name);
+                                    if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                                    {
+                                        Debug.Log("Try hit: " + sliderHitCircle.name);
 
-                                    sliderHitCircle.TryHit();
-                                    GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
+                                        sliderHitCircle.TryHit();
+                                        GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
+                                    }
+
+                                    break;
                                 }
-
-                                break;
-                            }
                             case SliderPositionRing sliderPositionRing:
-                            {
-                                break;
-                            }
+                                {
+                                    break;
+                                }
                         }
 
                     }
@@ -136,63 +151,50 @@ namespace Assets
 
         }
 
-        private bool IsHittable(RaycastHit2D[] array, out Type type)
+        private bool IsHittable(RaycastHit2D[] array, out Type type, out IHittable hittableObject)
         {
-            var iDs = new int[array.Length];
-            for (var index = 0; index < array.Length; index++)
+            var hittables = new List<IHittable>();
+            foreach (var raycastHit2D in array)
             {
-                try
-                {
-                    iDs[index] = int.Parse(array[index].transform.name.Split('-')[0]);
-                }
-                catch
-                {
 
-                }
-            }
-
-            try
-            {
-                int min = iDs.Min();
-                int minIndex = iDs.ToList().IndexOf(min);
-
-
-                try
-                {
-                    OnObject = array[minIndex].transform.GetComponent<HitCircle>();
-                    if (OnObject != null)
-                    {
-                        type = typeof(HitCircle);
-                        return true;
-                    }
-                }
-                catch { }
-
-                try
-                {
-                    OnObject = array[minIndex].transform.GetComponent<HitSlider>();
-                    if (OnObject != null)
-                    {
-                        type = typeof(HitSlider);
-                        return false;
-                    }
-                }
-                catch { }
-                try
-                {
-                    OnObject = array[minIndex].transform.GetComponent<SliderHitCircle>();
-                    if (OnObject != null)
-                    {
-                        type = typeof(SliderHitCircle);
-                        return true;
-                    }
-                }
-                catch { }
+                if (raycastHit2D.transform.GetComponent<IHittable>() != null)
+                    hittables.Add(raycastHit2D.transform.GetComponent<IHittable>());
 
             }
-            catch { }
+            if (!hittables.Any())
+            {
+                type = null;
+                hittableObject = null;
+                return false;
+            }
+
+
+            int minId = hittables.Select(h => h.HitID).ToList().Min();
+            hittableObject = hittables.Single(h => h.HitID == minId);
+
+            if (hittableObject.GetType() == typeof(HitCircle))
+            {
+                type = typeof(HitCircle);
+                return true;
+            }
+            else if (hittableObject.GetType() == typeof(SliderHitCircle))
+            {
+                type = typeof(SliderHitCircle);
+                return true;
+            }
+            else if (hittableObject.GetType() == typeof(HitSlider))
+            {
+                throw new Exception($"HitSlider recognised as IHittable. This is wrong!");
+            }
+            else if (hittableObject.GetType() == typeof(SliderPositionRing))
+            {
+                throw new Exception($"HitSlider recognised as IHittable. This is wrong!");
+            }
+
+
 
             type = null;
+            hittableObject = null;
             return false;
         }
 

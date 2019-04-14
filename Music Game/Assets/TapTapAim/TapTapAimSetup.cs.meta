@@ -3,7 +3,19 @@ guid: a2b3924bd62188b45a5604cdaabddc61
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - HitCircleTransform: {fileID: 224290006330236686, guid: 15b9f552f4b73d2459caa649d5b70caf,
+      type: 3}
+  - CircleTransform: {fileID: 8210459950470336948, guid: f8bf95fb2013a7c48a5e3b8b41062947,
+      type: 3}
+  - HitSliderTransform: {fileID: 224508964706169592, guid: 049349e5f1f2a014fa8e579174dd191d,
+      type: 3}
+  - Slider: {fileID: 6545153640501378883, guid: 9cb817e5dfe51ec4fa1f828554bee834,
+      type: 3}
+  - SliderPositionRing: {fileID: 2685797102212539053, guid: 4ca7e3c7523e87440932cb2485dc8e7d,
+      type: 3}
+  - SliderHitCircleTransform: {fileID: 3289923166283967729, guid: c2331340cfe746b4ca75275af699dbb8,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
