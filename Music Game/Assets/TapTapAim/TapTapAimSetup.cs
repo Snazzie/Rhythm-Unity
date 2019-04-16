@@ -140,8 +140,10 @@ namespace Assets.TapTapAim
             if (format.type == SliderType.PerfectCurve)
                 return null; // not implemented yet
 
-
+            
             var instance = Instantiate(HitSliderTransform, PlayArea).GetComponent<HitSlider>();
+            instance.Duration = (float)format.length;
+
 
             instance.TapTapAimSetup = this;
 

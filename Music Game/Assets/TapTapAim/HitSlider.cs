@@ -18,9 +18,8 @@ namespace Assets.TapTapAim
         public TapTapAimSetup TapTapAimSetup { get; set; }
         public ICircle BlankCircle { get; set; }
         public ISliderHitCircle InitialHitCircle { get; set; }
-        public ISliderPositionRing SliderPositionRing { get; set; }
-        public ISlider Slider { get; set; }
-        public List<Vector2> Points { get; set; }
+        public SliderPositionRing SliderPositionRing { get; set; }
+        public Slider Slider { get; set; }
         public int Bounces { get; set; }
         public int Number { get; set; }
         public float Duration { get; set; }
@@ -31,13 +30,14 @@ namespace Assets.TapTapAim
         public bool fadeInTriggered { get; set; }
         private float alpha = 0;
         public int AccuracyLaybackMs { get; set; } = 100;
-
+        private bool positionRingDone;
+        private bool isGoingForward { get; set; } = true;
         public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, TimeSpan perfectHitTime, int bounces, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
-            ((SliderHitCircle) InitialHitCircle).ParentSlider = this;
-            Slider = slider;
-            SliderPositionRing = sliderPositionRing;
+            ((SliderHitCircle)InitialHitCircle).ParentSlider = this;
+            Slider = (Slider)slider;
+            SliderPositionRing = (SliderPositionRing)sliderPositionRing;
             PerfectHitTime = perfectHitTime;
             Bounces = bounces;
             TapTapAimSetup = TapTapAimSetup;
@@ -50,9 +50,8 @@ namespace Assets.TapTapAim
                 VisibleStartOffsetMs = 400,
                 VisibleEndOffsetMs = 100
             };
-
             Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(Duration) - TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
             gameObject.SetActive(false);
         }
 
@@ -66,38 +65,52 @@ namespace Assets.TapTapAim
                 StartCoroutine(FadeIn());
 
             }
-
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleEndStart && !fadeOutTriggered)
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime + TimeSpan.FromMilliseconds(Duration))
             {
-                Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
                 StartCoroutine(FadeOut());
+                Destroy(gameObject, 1);
             }
-            if (((MonoBehaviour)Slider).transform.position == Slider.Points[pointToFollow] && pointToFollow >= Slider.Points.Count)
+
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime && !positionRingDone)
             {
-                SetDestination(Slider.Points[pointToFollow], 1 * ((Slider)Slider).SliderSpeed);
-                pointToFollow++;
+                tParam += Time.fixedDeltaTime * speed;
+                SliderPositionRing.transform.localPosition = Vector3.Lerp(SliderPositionRing.transform.localPosition, Slider.Points[pointToFollow], tParam);
+
+                if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
+                {
+                    if (isGoingForward)
+                        pointToFollow++;
+                    else
+                        pointToFollow--;
+                }
+
+                if (pointToFollow == Slider.Points.Count || pointToFollow == 0)
+                {
+                    if (Bounces == 0)
+                    {
+                        positionRingDone = true;
+                    }
+                    else
+                    {
+                        isGoingForward = !isGoingForward;
+                        if (!isGoingForward)
+                        {
+                            pointToFollow -= 2;
+                        }
+                    }
+                }
+
             }
 
 
         }
+
         float t;
 
         private int pointToFollow = 0;
         double timeToReachTarget;
-        Vector3 startPosition;
-        Vector3 target;
-        public void SetDestination(Vector3 destination, double time)
-        {
-            t = 0;
-            startPosition = transform.position;
-            timeToReachTarget = time;
-            target = destination;
-        }
-        void FixedUpdate()
-        {
-            //t += Time.deltaTime / (float)timeToReachTarget;
-            //((MonoBehaviour)SliderPositionRing).transform.position = Vector3.Lerp(startPosition, target, t); ;
-        }
+        private float speed = 2f;
+        private float tParam = 0f;
 
         IEnumerator FadeIn()
         {
@@ -176,38 +189,6 @@ namespace Assets.TapTapAim
                 SetAlpha(1.0f - Mathf.Clamp01(elapsedTime * 9));
             }
 
-        }
-
-
-        public void HideCircle()
-        {
-            List<Image> children = new List<Image>();
-            List<Text> textChild = new List<Text>();
-            var circle = ((MonoBehaviour)InitialHitCircle).transform;
-            foreach (var ic in circle.GetComponentsInChildren<Image>())
-            {
-                children.Add(ic);
-            }
-
-            foreach (var tc in circle.GetComponentsInChildren<Text>())
-            {
-                textChild.Add(tc);
-            }
-
-
-            foreach (var child in children)
-            {
-                var newColor = child.color;
-                newColor.a = 0;
-                child.color = newColor;
-            }
-
-            foreach (var child in textChild)
-            {
-                var newColor = child.color;
-                newColor.a = 0;
-                child.color = newColor;
-            }
         }
     }
 }

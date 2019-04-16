@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1271940495180459063}
   - component: {fileID: 475131112908299770}
   - component: {fileID: 378203514071359440}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SliderPositionRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}

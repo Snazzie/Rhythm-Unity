@@ -89,8 +89,7 @@ namespace Assets.TapTapAim
         int Number { get; set; }
 
         ISliderHitCircle InitialHitCircle { get; }
-        ISlider Slider { get; }
-        List<Vector2> Points { get; set; }
+        Slider Slider { get; }
         int Bounces { get; set; }
         float Duration { get; set; }
         float Progress { get; set; }

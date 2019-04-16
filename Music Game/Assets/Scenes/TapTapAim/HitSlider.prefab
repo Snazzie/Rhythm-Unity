@@ -152,7 +152,7 @@ LineRenderer:
     numCapVertices: 90
     alignment: 0
     textureMode: 0
-    shadowBias: 0.5
+    shadowBias: 0
     generateLightingData: 0
   m_UseWorldSpace: 0
   m_Loop: 0

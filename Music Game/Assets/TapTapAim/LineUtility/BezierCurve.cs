@@ -13,13 +13,12 @@ namespace Assets.TapTapAim.LineUtility
 
 
         public LineRenderer LineRenderer;
-        public int vertexCount = 100;
+        public static int vertexCount = 100;
         private List<Vector3> pointList;
 
         public static List<Vector3> GetPoints(List<Vector3> vectors)
         {
             var pointList = new List<Vector3>();
-            var vertexCount = 100;
             for (int i = 0; i < vectors.Count; i += 3)
             {
                 if (!(i + 2 >= vectors.Count))
