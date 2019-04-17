@@ -73,31 +73,39 @@ namespace Assets.TapTapAim
 
             if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime && !positionRingDone)
             {
-                tParam += Time.fixedDeltaTime * speed;
-                SliderPositionRing.transform.localPosition = Vector3.Lerp(SliderPositionRing.transform.localPosition, Slider.Points[pointToFollow], tParam);
-
-                if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
+                try
                 {
-                    if (isGoingForward)
-                        pointToFollow++;
-                    else
-                        pointToFollow--;
-                }
+                    tParam += Time.fixedDeltaTime * speed;
+                    SliderPositionRing.transform.localPosition =
+                        Vector3.Lerp(SliderPositionRing.transform.localPosition, Slider.Points[pointToFollow], tParam);
 
-                if (pointToFollow == Slider.Points.Count || pointToFollow == 0)
-                {
-                    if (Bounces == 0)
+                    if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
                     {
-                        positionRingDone = true;
+                        if (isGoingForward)
+                            pointToFollow++;
+                        else
+                            pointToFollow--;
                     }
-                    else
+
+                    if (pointToFollow == Slider.Points.Count || pointToFollow == 0)
                     {
-                        isGoingForward = !isGoingForward;
-                        if (!isGoingForward)
+                        if (Bounces == 0)
                         {
-                            pointToFollow -= 2;
+                            positionRingDone = true;
+                        }
+                        else
+                        {
+                            isGoingForward = !isGoingForward;
+                            if (!isGoingForward)
+                            {
+                                pointToFollow -= 2;
+                            }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
                 }
 
             }

@@ -21,14 +21,16 @@ namespace Assets.TapTapAim
 
         private bool showSliders { get; } = true;
         private bool showCircles { get; } = true;
-
+        public bool isAutoPlay { get; } = true;
+        public bool followSliderPositionRing { get; } = false;
+        public bool interactWithSliderPositionRing { get; } = false;
 
         /// <summary>
         /// set a window of how innaccurate a hit can be to still be count as perfect
         /// </summary>
         public static int AccuracyLaybackMs { get; } = 100;
         public Transform PlayArea { get; set; }
-        public List<IHittable> HitObjectQueue { get; } = new List<IHittable>();
+        public List<IInteractable> ObjectInteractQueue { get; } = new List<IInteractable>();
         public List<IQueuable> ObjActivationQueue { get; } = new List<IQueuable>();
         public ITracker Tracker { get; set; }
 
@@ -45,7 +47,7 @@ namespace Assets.TapTapAim
         private int PrevGroupID { get; set; } = -1;
         private int GroupIDCount { get; set; } = 0;
 
-        private int HitID { get; set; } = -1;
+        private int InteractionID { get; set; } = -1;
         void Start()
         {
             PlayArea = GameObject.Find("PlayArea").transform;
@@ -65,9 +67,9 @@ namespace Assets.TapTapAim
             InstantiateObjects();
         }
 
-        private int GetHitID()
+        private int GetInteractionID()
         {
-            return HitID += 1;
+            return InteractionID += 1;
         }
 
         void InstantiateObjects()
@@ -87,9 +89,9 @@ namespace Assets.TapTapAim
                     if (showCircles)
                     {
                         var circle = CreateHitCircle(index, hitObject);
-                        circle.HitID = GetHitID();
+                        circle.InteractionID = GetInteractionID();
                         ObjActivationQueue.Add(circle);
-                        HitObjectQueue.Add(circle);
+                        ObjectInteractQueue.Add(circle);
 
                         circle.name = ObjActivationQueue.Count - 1 + "-HitCircle";
                         circle.QueueID = ObjActivationQueue.Count - 1;
@@ -103,17 +105,17 @@ namespace Assets.TapTapAim
                         var slider = CreateHitSlider(index, hitObject);
                         if (slider != null)
                         {
-                            //HitObjectQueue.Add(slider);
+                            //ObjectInteractQueue.Add(slider);
                             ObjActivationQueue.Add(slider);
                             slider.QueueID = ((SliderHitCircle)slider.InitialHitCircle).QueueID = ObjActivationQueue.Count - 1;
-                            slider.InitialHitCircle.HitID = GetHitID();
-                            HitObjectQueue.Add(slider.InitialHitCircle);
+                            slider.InitialHitCircle.InteractionID = GetInteractionID();
+                            ObjectInteractQueue.Add(slider.InitialHitCircle);
 
                             slider.name = ObjActivationQueue.Count - 1 + "-HitSlider";
-                            //slider.SliderPositionRing.HitID = GetHitID();
+                            //slider.SliderPositionRing.InteractionID = GetInteractionID();
                             
 
-                            //HitObjectQueue.Add(slider.SliderPositionRing);
+                            //ObjectInteractQueue.Add(slider.SliderPositionRing);
                         }
                     }
                 }
@@ -234,7 +236,7 @@ namespace Assets.TapTapAim
             instance.GetComponent<RectTransform>().anchoredPosition = new Vector3(format.x, format.y, 0);
             instance.transform.localScale = new Vector2(1f, 1f);
 
-            instance.PerfectHitTime = GetPerfectTime(format);
+            instance.PerfectInteractionTime = GetPerfectTime(format);
             return instance;
         }
 
@@ -253,7 +255,7 @@ namespace Assets.TapTapAim
             instance.transform.GetComponent<RectTransform>().anchoredPosition = new Vector3(circleFormat.x, circleFormat.y, 0);
             instance.transform.localScale = new Vector2(1f, 1f);
 
-            instance.PerfectHitTime = GetPerfectTime(circleFormat);
+            instance.PerfectInteractionTime = GetPerfectTime(circleFormat);
             return instance;
         }
 

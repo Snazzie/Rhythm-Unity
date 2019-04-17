@@ -14,7 +14,7 @@ namespace Assets.TapTapAim
         AudioSource MusicSource { get; }
         AudioSource HitSource { get; }
         Transform PlayArea { get; set; }
-        List<IHittable> HitObjectQueue { get; }
+        List<IInteractable> ObjectInteractQueue { get; }
         List<IQueuable> ObjActivationQueue { get; }
     }
     public interface ITracker
@@ -41,28 +41,29 @@ namespace Assets.TapTapAim
         TapTapAimSetup TapTapAimSetup { get; set; }
         Visibility Visibility { get; set; }
     }
-    public interface ICircle : IObject
+    public interface ICircle : IObject{}
+    public interface IHitCircle : ICircle, IHittable, IQueuable, IDisplaysGroupNumber { }
+    public interface ISliderHitCircle : ICircle, IHittable, IDisplaysGroupNumber { }
+    public interface IInteractable : IObject
     {
-    }
-
-    public interface IHittable : IObject
-    {
-        int HitID { get; set; }
-        void TryHit();
-        TimeSpan PerfectHitTime { get; set; }
+        int InteractionID { get; set; }
+        void TryInteract();
+        TimeSpan PerfectInteractionTime { get; set; }
         int AccuracyLaybackMs { get; set; }
-        bool IsHitAttempted { get; }
-        TimeSpan HitBoundStart { get; }
-        TimeSpan HitBoundEnd { get; }
-        bool IsInHitBound(TimeSpan time);
+
+        TimeSpan InteractionBoundStart { get; }
+        TimeSpan InteractionBoundEnd { get; }
+        bool IsInInteractionBound(TimeSpan time);
+        event EventHandler OnInteract;
     }
 
-    public interface IHitCircle : ICircle, IHittable, IQueuable,IDisplaysGroupNumber{}
-
-    public interface ISliderHitCircle : ICircle, IHittable, IDisplaysGroupNumber
+    public interface IHittable : IInteractable
     {
-        event EventHandler OnHitOrShowSliderTimingCircleEvent;
+        bool IsHitAttempted { get; }
+
     }
+    public interface IHoldable : IInteractable { }
+
     public interface IDisplaysGroupNumber
     {
         int GroupNumberShownOnCircle { get; set; }
@@ -75,13 +76,9 @@ namespace Assets.TapTapAim
         SliderType SliderType { get; }
     }
 
-    public interface ISliderPositionRing : IObject, IFollow
+    public interface ISliderPositionRing : IHoldable
     {
 
-    }
-
-    public interface IFollow
-    {
     }
 
     public interface IHitSlider : IObject, IQueuable

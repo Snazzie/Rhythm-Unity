@@ -57,8 +57,8 @@ namespace Assets.TapTapAim
 
             try
             {
-                if (NextObjToHit < TapTapAimSetup.HitObjectQueue.Count)
-                    IterateHitQueue();
+                if (NextObjToHit < TapTapAimSetup.ObjectInteractQueue.Count)
+                    IterateInteractionQueue();
             }
             catch (Exception e)
             {
@@ -78,10 +78,10 @@ namespace Assets.TapTapAim
                 SceneManager.LoadScene("MapSelect");
             else if (Input.GetKey(KeyCode.Space))
                 if (TimeSpan.FromSeconds(TapTapAimSetup.MusicSource.time) - TimeSpan.FromSeconds(5) <
-                    TapTapAimSetup.HitObjectQueue[0].Visibility.VisibleStartStart && !SkippedToStart)
+                    TapTapAimSetup.ObjectInteractQueue[0].Visibility.VisibleStartStart && !SkippedToStart)
                 {
                     SkippedToStart = true;
-                    TapTapAimSetup.MusicSource.time = (float)TapTapAimSetup.HitObjectQueue[0].Visibility.VisibleStartStart.TotalSeconds - 5f;
+                    TapTapAimSetup.MusicSource.time = (float)TapTapAimSetup.ObjectInteractQueue[0].Visibility.VisibleStartStart.TotalSeconds - 5f;
                 }
 
         }
@@ -120,9 +120,9 @@ namespace Assets.TapTapAim
         }
         private void IterateObjectQueue()
         {
-            //if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(500) >= ((IObject)TapTapAimSetup.HitObjectQueue[nextObjectID]).VisibleStartStart)
+            //if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(500) >= ((IObject)TapTapAimSetup.ObjectInteractQueue[nextObjectID]).VisibleStartStart)
             //{
-            //    ((MonoBehaviour)TapTapAimSetup.HitObjectQueue[nextObjectID]).gameObject.SetActive(true);
+            //    ((MonoBehaviour)TapTapAimSetup.ObjectInteractQueue[nextObjectID]).gameObject.SetActive(true);
             //    nextObjectID++;
             //}
             if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(200) >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStart)
@@ -131,11 +131,11 @@ namespace Assets.TapTapAim
                 NextObjToActivateID++;
 
             }
-            if (nextObjectID == (TapTapAimSetup).ObjActivationQueue.Count && nextObjectID == TapTapAimSetup.HitObjectQueue.Count)
+            if (nextObjectID == (TapTapAimSetup).ObjActivationQueue.Count && nextObjectID == TapTapAimSetup.ObjectInteractQueue.Count)
                 GameFinished = true;
         }
 
-        public void IterateHitQueue(int? thisId = null)
+        public void IterateInteractionQueue(int? thisId = null)
         {
             if (thisId != null)
             {
@@ -143,7 +143,7 @@ namespace Assets.TapTapAim
                 Debug.Log($"set nextHitObj to:{NextObjToHit}");
                 return;
             }
-            //if (Stopwatch.Elapsed >= (TapTapAimSetup.HitObjectQueue[NextObjToHit]).PerfectHitTime + TimeSpan.FromMilliseconds(TapTapAimSetup.AccuracyLaybackMs))
+            //if (Stopwatch.Elapsed >= (TapTapAimSetup.ObjectInteractQueue[NextObjToHit]).PerfectInteractionTime + TimeSpan.FromMilliseconds(TapTapAimSetup.AccuracyLaybackMs))
             //{
             //    NextObjToHit++;
             //    Debug.Log($"iterate hitQueue to:{NextObjToHit}");

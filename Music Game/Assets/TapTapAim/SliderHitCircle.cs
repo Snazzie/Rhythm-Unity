@@ -17,21 +17,22 @@ namespace Assets.TapTapAim
         {
             public TapTapAimSetup TapTapAimSetup { get; set; }
             public int QueueID { get; set; }
-            public int HitID { get; set; }
-            public TimeSpan PerfectHitTime { get; set; }
+            public int InteractionID { get; set; }
+            public TimeSpan PerfectInteractionTime { get; set; }
 
             public bool IsHitAttempted { get; private set; } = false;
             public int AccuracyLaybackMs { get; set; } = 100;
             public int GroupNumberShownOnCircle { get; set; }
-            public event EventHandler OnHitOrShowSliderTimingCircleEvent;
+            public event EventHandler OnInteract;
+
             private bool StopCalculating;
 
             public HitSlider ParentSlider { get; set; }
             public Visibility Visibility { get; set; }
 
-            public TimeSpan HitBoundStart { get; set; }
+            public TimeSpan InteractionBoundStart { get; set; }
 
-            public TimeSpan HitBoundEnd { get; set; }
+            public TimeSpan InteractionBoundEnd { get; set; }
 
             private YieldInstruction instruction = new YieldInstruction();
 
@@ -48,24 +49,24 @@ namespace Assets.TapTapAim
                 TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
                 transform.GetChild(1).GetComponent<Text>().text = GroupNumberShownOnCircle.ToString();
 
-                HitBoundStart = PerfectHitTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs);
-                HitBoundEnd = PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs);
+                InteractionBoundStart = PerfectInteractionTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs);
+                InteractionBoundEnd = PerfectInteractionTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs);
 
                 Visibility = new Visibility()
                 {
                     VisibleStartOffsetMs = 400,
                     VisibleEndOffsetMs = 50
                 };
-                Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(Visibility.VisibleStartOffsetMs);
-                Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
-                OnHitOrShowSliderTimingCircleEvent += SliderHitCircle_OnHitOrShowSliderTimingCircleEvent;
+                Visibility.VisibleStartStart = PerfectInteractionTime - TimeSpan.FromMilliseconds(Visibility.VisibleStartOffsetMs);
+                Visibility.VisibleEndStart = PerfectInteractionTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
+                OnInteract += SliderHitCircle_OnHitOrShowSliderTimingCircleEvent;
                 gameObject.SetActive(false);
             }
 
             private void SliderHitCircle_OnHitOrShowSliderTimingCircleEvent(object sender, EventArgs e)
             {
                 IsHitAttempted = true;
-                ((Tracker)TapTapAimSetup.Tracker).IterateHitQueue(HitID);
+                ((Tracker)TapTapAimSetup.Tracker).IterateInteractionQueue(InteractionID);
 
                 //throw new NotImplementedException();
             }
@@ -80,7 +81,7 @@ namespace Assets.TapTapAim
                         StartCoroutine(TimingRingShrink());
                     }
 
-                    if (IsInHitBound(TapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                    if (IsInInteractionBound(TapTapAimSetup.Tracker.Stopwatch.Elapsed))
                     {
                         transform.GetComponent<Rigidbody2D>().simulated = true;
                         transform.GetComponent<CircleCollider2D>().enabled = true;
@@ -93,7 +94,7 @@ namespace Assets.TapTapAim
                         transform.GetComponent<CircleCollider2D>().enabled = false;
                         
 
-                        Debug.LogError($" HitId:{HitID} Not hit attempted.  next hit id: {TapTapAimSetup.Tracker.NextObjToHit}");
+                        Debug.LogError($" HitId:{InteractionID} Not hit attempted.  next hit id: {TapTapAimSetup.Tracker.NextObjToHit}");
                         Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
                         Disappear();
                     }
@@ -104,7 +105,7 @@ namespace Assets.TapTapAim
             {
                 var time = TapTapAimSetup.Tracker.Stopwatch.Elapsed;
                 if (time >= Visibility.VisibleStartStart
-                    && time <= PerfectHitTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs))
+                    && time <= PerfectInteractionTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs))
                 {
                     return true;
                 }
@@ -113,13 +114,13 @@ namespace Assets.TapTapAim
 
             public bool IsPastLifeBound()
             {
-                return TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
+                return TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectInteractionTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
             }
 
-            public bool IsInHitBound(TimeSpan time)
+            public bool IsInInteractionBound(TimeSpan time)
             {
-                if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs)
-                    && time <= PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
+                if (time >= PerfectInteractionTime - TimeSpan.FromMilliseconds(AccuracyLaybackMs)
+                    && time <= PerfectInteractionTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
                 {
                     return true;
                 }
@@ -127,36 +128,36 @@ namespace Assets.TapTapAim
             }
             public bool IsInAutoPlayHitBound(TimeSpan time)
             {
-                if (time >= PerfectHitTime - TimeSpan.FromMilliseconds(20) && time <= PerfectHitTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
+                if (time >= PerfectInteractionTime - TimeSpan.FromMilliseconds(20) && time <= PerfectInteractionTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
                 {
                     return true;
                 }
                 return false;
             }
 
-            public void TryHit()
+            public void TryInteract()
             {
                 TimeSpan hitTime = TapTapAimSetup.Tracker.Stopwatch.Elapsed;
                 if (!IsHitAttempted)
                 {
-                    Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectHitTime + "   IsInBounds:" +
-                              IsInHitBound(hitTime));
-                    if (HitID == TapTapAimSetup.Tracker.NextObjToHit)
+                    Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectInteractionTime + "   IsInBounds:" +
+                              IsInInteractionBound(hitTime));
+                    if (InteractionID == TapTapAimSetup.Tracker.NextObjToHit)
                     {
 
                         transform.GetComponent<Rigidbody2D>().simulated = false;
                         transform.GetComponent<CircleCollider2D>().enabled = false;
 
 
-                        if (IsInHitBound(hitTime))
+                        if (IsInInteractionBound(hitTime))
                         {
-                            OnHitOrShowSliderTimingCircleEvent.Invoke(this, null);
+                            OnInteract.Invoke(this, null);
                             TapTapAimSetup.HitSource.Play();
                             Outcome(hitTime, true);
                         }
                         else
                         {
-                            Debug.LogError($" HitId:{HitID} Hit attempted but missed. Time difference: {hitTime - PerfectHitTime}ms");
+                            Debug.LogError($" HitId:{InteractionID} Hit attempted but missed. Time difference: {hitTime - PerfectInteractionTime}ms");
                             Outcome(hitTime, false);
                         }
                     }
@@ -164,7 +165,7 @@ namespace Assets.TapTapAim
                 }
                 else
                 {
-                    Debug.LogError($" HitId:{HitID} Hit already attempted. Time difference: {hitTime - PerfectHitTime}ms");
+                    Debug.LogError($" HitId:{InteractionID} Hit already attempted. Time difference: {hitTime - PerfectInteractionTime}ms");
                 }
             }
 
@@ -193,11 +194,11 @@ namespace Assets.TapTapAim
 
             private void Outcome(TimeSpan time, bool hit)
             {
-                //TapTapAimSetup.Tracker.NextObjToHit = HitID + 1;
+                //TapTapAimSetup.Tracker.NextObjToHit = InteractionID + 1;
 
                 if (hit)
                 {
-                    var difference = Math.Abs(time.TotalMilliseconds - PerfectHitTime.TotalMilliseconds);
+                    var difference = Math.Abs(time.TotalMilliseconds - PerfectInteractionTime.TotalMilliseconds);
                     int score;
                     if (difference <= 100)
                     {
