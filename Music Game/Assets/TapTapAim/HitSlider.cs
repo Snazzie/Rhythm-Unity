@@ -32,6 +32,14 @@ namespace Assets.TapTapAim
         public int AccuracyLaybackMs { get; set; } = 100;
         private bool positionRingDone;
         private bool isGoingForward { get; set; } = true;
+
+        float t;
+
+        private int pointToFollow = 0;
+        double timeToReachTarget;
+        private float speed = 2f;
+        private float tParam = 0f;
+
         public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, TimeSpan perfectHitTime, int bounces, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
@@ -76,8 +84,7 @@ namespace Assets.TapTapAim
                 try
                 {
                     tParam += Time.fixedDeltaTime * speed;
-                    SliderPositionRing.transform.localPosition =
-                        Vector3.Lerp(SliderPositionRing.transform.localPosition, Slider.Points[pointToFollow], tParam);
+                    SliderPositionRing.transform.localPosition =Vector3.Lerp(SliderPositionRing.transform.localPosition, Slider.Points[pointToFollow], tParam);
 
                     if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
                     {
@@ -87,7 +94,7 @@ namespace Assets.TapTapAim
                             pointToFollow--;
                     }
 
-                    if (pointToFollow == Slider.Points.Count || pointToFollow == 0)
+                    if (pointToFollow == Slider.Points.Count || pointToFollow == -1)
                     {
                         if (Bounces == 0)
                         {
@@ -99,6 +106,10 @@ namespace Assets.TapTapAim
                             if (!isGoingForward)
                             {
                                 pointToFollow -= 2;
+                            }
+                            else
+                            {
+                                pointToFollow += 2;
                             }
                         }
                     }
@@ -113,12 +124,7 @@ namespace Assets.TapTapAim
 
         }
 
-        float t;
 
-        private int pointToFollow = 0;
-        double timeToReachTarget;
-        private float speed = 2f;
-        private float tParam = 0f;
 
         IEnumerator FadeIn()
         {

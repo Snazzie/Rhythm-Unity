@@ -158,6 +158,8 @@ namespace Assets
 
                 if (raycastHit2D.transform.GetComponent<IHitCircle>() != null)
                     interactables.Add(raycastHit2D.transform.GetComponent<IHitCircle>());
+                else if (raycastHit2D.transform.GetComponent<ISliderHitCircle>() != null)
+                    interactables.Add(raycastHit2D.transform.GetComponent<ISliderHitCircle>());
                 else if( tapTapAimSetup.interactWithSliderPositionRing && raycastHit2D.transform.GetComponent<ISliderPositionRing>() != null)
                     interactables.Add(raycastHit2D.transform.GetComponent<ISliderPositionRing>());
 
