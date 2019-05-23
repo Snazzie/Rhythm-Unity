@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.TapTapAim;
 using Assets.TapTapAim;
 using UnityEngine;
 using UnityEngine.SceneManagement;
