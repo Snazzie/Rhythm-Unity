@@ -19,6 +19,8 @@ namespace Assets.Scripts.TapTapAim
         public Transform SliderHitCircleTransform;
 
         private bool showSliders { get; } = true;
+        private bool showLinerSlider { get; } = true;
+        private bool showQuadraticSlider { get; } = false;
         private bool showCircles { get; } = true;
         public bool isAutoPlay { get; } = true;
         public bool followSliderPositionRing { get; } = false;
@@ -138,7 +140,7 @@ namespace Assets.Scripts.TapTapAim
         {
 
             var format = new SliderFormat(hitObject);
-            if (format.type == SliderType.PerfectCurve)
+            if (format.type == SliderType.PerfectCurve || (!showQuadraticSlider && format.type== SliderType.BezierCurve))
                 return null; // not implemented yet
 
             
@@ -318,7 +320,7 @@ namespace Assets.Scripts.TapTapAim
                     case "P":
                         //type = SliderType.PerfectCurve;
                         //break;
-                    case "B":
+                    case "B": 
                         type = SliderType.BezierCurve;
                         var list = new List<Vector3>(vectors);
                         list.Insert(0, new Vector3(x, y, 0));

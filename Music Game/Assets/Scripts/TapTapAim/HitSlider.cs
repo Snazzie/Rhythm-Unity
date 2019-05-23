@@ -23,6 +23,7 @@ namespace Assets.Scripts.TapTapAim
         public int Bounces { get; set; }
         public int Number { get; set; }
         public float Duration { get; set; }
+        public TimeSpan End { get; set; }
         public float Progress { get; set; }
         public bool GoingForward { get; set; }
         public bool LookForward { get; set; }
@@ -32,14 +33,9 @@ namespace Assets.Scripts.TapTapAim
         public int AccuracyLaybackMs { get; set; } = 100;
         private bool positionRingDone;
         private bool isGoingForward { get; set; } = true;
-
-        float t;
-
-        private int pointToFollow = 0;
-        double timeToReachTarget;
-        private float speed = 2f;
-        private float tParam = 0f;
-
+        [SerializeField]
+        [Range(0.0f, 100.0f)]
+        private float TParam;
         public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, TimeSpan perfectHitTime, int bounces, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
@@ -50,7 +46,7 @@ namespace Assets.Scripts.TapTapAim
             Bounces = bounces;
             TapTapAimSetup = TapTapAimSetup;
             Ready = true;
-
+            End = perfectHitTime + TimeSpan.FromMilliseconds(Duration);
             TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             SetAlpha(alpha);
             Visibility = new Visibility()
@@ -79,40 +75,43 @@ namespace Assets.Scripts.TapTapAim
                 Destroy(gameObject, 1);
             }
 
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime && !positionRingDone)
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime &&!positionRingDone)
             {
                 try
                 {
-                    tParam += Time.fixedDeltaTime * speed;
-                    SliderPositionRing.transform.localPosition =Vector3.Lerp(SliderPositionRing.transform.localPosition, Slider.Points[pointToFollow], tParam);
+                    // currently doesnt consider bounces
+                    TParam = ((float)(TapTapAimSetup.Tracker.Stopwatch.Elapsed - PerfectHitTime).TotalMilliseconds / (Duration));
 
-                    if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
-                    {
-                        if (isGoingForward)
-                            pointToFollow++;
-                        else
-                            pointToFollow--;
-                    }
+                    Debug.Log(TParam);
+                    SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(TParam > 1 ? 1 : TParam);
 
-                    if (pointToFollow == Slider.Points.Count || pointToFollow == -1)
-                    {
-                        if (Bounces == 0)
-                        {
-                            positionRingDone = true;
-                        }
-                        else
-                        {
-                            isGoingForward = !isGoingForward;
-                            if (!isGoingForward)
-                            {
-                                pointToFollow -= 2;
-                            }
-                            else
-                            {
-                                pointToFollow += 2;
-                            }
-                        }
-                    }
+                    //if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
+                    //{
+                    //    if (isGoingForward)
+                    //        pointToFollow++;
+                    //    else
+                    //        pointToFollow--;
+                    //}
+
+                    //if (pointToFollow == Slider.Points.Count || pointToFollow == -1)
+                    //{
+                    //    if (Bounces == 0)
+                    //    {
+                    //        positionRingDone = true;
+                    //    }
+                    //    else
+                    //    {
+                    //        isGoingForward = !isGoingForward;
+                    //        if (!isGoingForward)
+                    //        {
+                    //            pointToFollow -= 2;
+                    //        }
+                    //        else
+                    //        {
+                    //            pointToFollow += 2;
+                    //        }
+                    //    }
+                    //}
                 }
                 catch (Exception e)
                 {

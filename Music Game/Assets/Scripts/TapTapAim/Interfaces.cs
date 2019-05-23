@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Assets.TapTapAim;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Visibility = Assets.TapTapAim.Visibility;
 
 namespace Assets.Scripts.TapTapAim
 {
@@ -72,6 +73,7 @@ namespace Assets.Scripts.TapTapAim
 
         List<Vector3> Points { get; set; }
         SliderType SliderType { get; }
+        Vector3 GetPositionAtTime(float tParam);
     }
 
     public interface ISliderPositionRing : IHoldable

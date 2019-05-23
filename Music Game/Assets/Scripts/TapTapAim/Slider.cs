@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.TapTapAim
@@ -17,6 +18,23 @@ namespace Assets.Scripts.TapTapAim
         }
 
         public SliderType SliderType { get; set; }
+        public Vector3 GetPositionAtTime(float tParam)
+        {
+
+
+            switch (SliderType)
+            {
+                case SliderType.LinearLine:
+                    return Points[0] + tParam * (Points[1] - Points[0]);
+                case SliderType.PerfectCurve:
+                    throw new NotImplementedException();
+                case SliderType.BezierCurve:
+                    throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public List<Vector3> Points { get; set; }
 
     }
