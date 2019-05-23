@@ -17,7 +17,6 @@ namespace Assets.Scripts.TapTapAim
         public Transform Slider;
         public Transform SliderPositionRing;
         public Transform SliderHitCircleTransform;
-        public Transform BlankCircle;
 
         private bool showSliders { get; } = true;
         private bool showCircles { get; } = true;
