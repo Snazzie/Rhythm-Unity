@@ -1,0 +1,39 @@
+{
+    "skin": [
+        {
+            "circleGroupBackgroundColour": [
+                "30,30,30",
+                "124,124,124",
+                "45,250,130",
+                "45,250,30"
+            ],
+            "circleGroupBackgroundImage": [
+                "Circle Mask"
+            ],
+            "circleGroupRingColour": [
+                "255,255,255"
+            ],
+            "circleGroupRingImage": [
+                "Ring Mask"
+            ],
+            "circleGroupApproachCircleColour": [
+                "255,255,255"
+            ],
+            "circleGroupApproachCircleImage": [
+                "Ring Mask"
+            ],
+            "cursorImage": "cursor",
+            "cursorRotationSpeed": "0",
+            "cursorTrailColour": "250,250,250",
+            "cursorTrailSeperationDistance": "10",
+            "cursorTrailLifeTime": "1"
+        }
+    ],
+    "Sounds": [
+        {
+            "hitFirstKey": "hit",
+            "hitSecondKey": "hit",
+            "hitFailSound": "hit"
+        }
+    ]
+}

@@ -50,8 +50,8 @@ namespace Assets.Scripts.TapTapAim
         TimeSpan PerfectInteractionTime { get; set; }
         int AccuracyLaybackMs { get; set; }
 
-        TimeSpan InteractionBoundStart { get; }
-        TimeSpan InteractionBoundEnd { get; }
+        TimeSpan InteractionBoundStart { get; set; }
+        TimeSpan InteractionBoundEnd { get; set; }
         bool IsInInteractionBound(TimeSpan time);
         event EventHandler OnInteract;
     }

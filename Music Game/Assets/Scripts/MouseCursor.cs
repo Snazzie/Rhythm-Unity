@@ -17,7 +17,6 @@ namespace Assets.Scripts
         double timeToReachTarget;
         private TapTapAimSetup tapTapAimSetup;
         private IInteractable OnObject { get; set; }
-        private bool IsUserControl { get; set; }
         public bool IsGame { get; set; }
         private float Radius { get; set; }
         private IInteractable currentTarget { get; set; }
@@ -60,7 +59,12 @@ namespace Assets.Scripts
                     }
 
                     //pos.y += 0.1f;
-                    SetDestination(nextObj.position, (nextObj.GetComponent<IInteractable>().PerfectInteractionTime - tapTapAimSetup.Tracker.Stopwatch.Elapsed).TotalSeconds * Speed);
+                    if (nextObj.transform.GetComponent<IHoldable>() == null)
+                        SetDestination(nextObj.position, (nextObj.GetComponent<IInteractable>().PerfectInteractionTime - tapTapAimSetup.Tracker.Stopwatch.Elapsed).TotalSeconds * Speed);
+                    else
+                    {
+                        SetDestination(nextObj.position, 0);
+                    }
                     t += Time.deltaTime / (float)timeToReachTarget;
                     transform.position = Vector3.Lerp(startPosition, target, t);
                 }
@@ -129,6 +133,13 @@ namespace Assets.Scripts
                                 }
                             case SliderPositionRing sliderPositionRing:
                                 {
+                                    if (sliderPositionRing.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                                    {
+                                        //Debug.Log("Try interact: " + sliderPositionRing.name);
+                                        //sliderPositionRing.TryInteract();
+                                        //GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
+                                    }
+
                                     break;
                                 }
                         }
@@ -180,7 +191,7 @@ namespace Assets.Scripts
             }
             else if (interactableObject.GetType() == typeof(SliderPositionRing))
             {
-                throw new Exception($"HitSlider recognised as IHittable. This is wrong!");
+                return true;
             }
 
             interactableObject = null;

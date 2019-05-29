@@ -12,6 +12,7 @@ namespace Assets
         private GameObject _Cursor { get; set; }
         void Start()
         {
+            Application.targetFrameRate = 300;
             _Cursor = GameObject.FindWithTag("Cursor");
 
 

@@ -23,8 +23,8 @@ namespace Assets.Scripts.TapTapAim
         private bool showQuadraticSlider { get; } = false;
         private bool showCircles { get; } = true;
         public bool isAutoPlay { get; } = true;
-        public bool followSliderPositionRing { get; } = false;
-        public bool interactWithSliderPositionRing { get; } = false;
+
+        public bool interactWithSliderPositionRing { get; } = true;
 
         /// <summary>
         /// set a window of how innaccurate a hit can be to still be count as perfect
@@ -68,9 +68,10 @@ namespace Assets.Scripts.TapTapAim
             InstantiateObjects();
         }
 
-        private int GetInteractionID()
+        private void AddInteractable(IInteractable interactableObject)
         {
-            return InteractionID += 1;
+            interactableObject.InteractionID = InteractionID += 1;
+            ObjectInteractQueue.Add(interactableObject);
         }
 
         void InstantiateObjects()
@@ -90,9 +91,8 @@ namespace Assets.Scripts.TapTapAim
                     if (showCircles)
                     {
                         var circle = CreateHitCircle(index, hitObject);
-                        circle.InteractionID = GetInteractionID();
+                        AddInteractable(circle);
                         ObjActivationQueue.Add(circle);
-                        ObjectInteractQueue.Add(circle);
 
                         circle.name = ObjActivationQueue.Count - 1 + "-HitCircle";
                         circle.QueueID = ObjActivationQueue.Count - 1;
@@ -109,14 +109,11 @@ namespace Assets.Scripts.TapTapAim
                             //ObjectInteractQueue.Add(slider);
                             ObjActivationQueue.Add(slider);
                             slider.QueueID = ((SliderHitCircle)slider.InitialHitCircle).QueueID = ObjActivationQueue.Count - 1;
-                            slider.InitialHitCircle.InteractionID = GetInteractionID();
-                            ObjectInteractQueue.Add(slider.InitialHitCircle);
+                            AddInteractable(slider.InitialHitCircle);
+                            if (interactWithSliderPositionRing)
+                                AddInteractable(slider.SliderPositionRing);
 
                             slider.name = ObjActivationQueue.Count - 1 + "-HitSlider";
-                            //slider.SliderPositionRing.InteractionID = GetInteractionID();
-                            
-
-                            //ObjectInteractQueue.Add(slider.SliderPositionRing);
                         }
                     }
                 }
@@ -140,10 +137,10 @@ namespace Assets.Scripts.TapTapAim
         {
 
             var format = new SliderFormat(hitObject);
-            if (format.type == SliderType.PerfectCurve || (!showQuadraticSlider && format.type== SliderType.BezierCurve))
+            if (format.type == SliderType.PerfectCurve || (!showQuadraticSlider && format.type == SliderType.BezierCurve))
                 return null; // not implemented yet
 
-            
+
             var instance = Instantiate(HitSliderTransform, PlayArea).GetComponent<HitSlider>();
             instance.Duration = (float)format.length;
 
@@ -183,6 +180,7 @@ namespace Assets.Scripts.TapTapAim
             sliderPositionRingInstance.GetComponent<RectTransform>().position = sliderHitcircleInstance.GetComponent<RectTransform>().position;
 
             sliderPositionRingInstance.name = "SliderPositionRing";
+            sliderPositionRingInstance.TapTapAimSetup = this;
             Slider sliderInstance = NewSliderInstance(format, instance, sliderPositionRingInstance);
 
             instance.SetUp(
@@ -198,7 +196,7 @@ namespace Assets.Scripts.TapTapAim
 
         private Slider NewSliderInstance(SliderFormat format, HitSlider instance, SliderPositionRing sliderPositionRingInstance)
         {
-            var sliderInstance = Instantiate(Slider,transform).GetComponent<Slider>();
+            var sliderInstance = Instantiate(Slider, transform).GetComponent<Slider>();
             sliderInstance.transform.SetParent(instance.transform);
             sliderInstance.LineRenderer = instance.GetComponent<LineRenderer>();
             sliderInstance.SliderPositionRing = sliderPositionRingInstance;
@@ -318,9 +316,9 @@ namespace Assets.Scripts.TapTapAim
                         points = LinearLine.GetPoints(new Vector2(x, y), vectors[0]);
                         break;
                     case "P":
-                        //type = SliderType.PerfectCurve;
-                        //break;
-                    case "B": 
+                    //type = SliderType.PerfectCurve;
+                    //break;
+                    case "B":
                         type = SliderType.BezierCurve;
                         var list = new List<Vector3>(vectors);
                         list.Insert(0, new Vector3(x, y, 0));

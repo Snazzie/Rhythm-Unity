@@ -56,6 +56,11 @@ namespace Assets.Scripts.TapTapAim
             };
             Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
             Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(Duration) - TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+            sliderPositionRing.PerfectInteractionTime = PerfectHitTime;
+            sliderPositionRing.InteractionBoundStart = perfectHitTime;
+            sliderPositionRing.InteractionBoundEnd = perfectHitTime + TimeSpan.FromMilliseconds(Duration);
+
+
             gameObject.SetActive(false);
         }
 
