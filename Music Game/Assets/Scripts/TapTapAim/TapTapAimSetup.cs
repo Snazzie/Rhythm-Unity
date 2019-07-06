@@ -142,7 +142,7 @@ namespace Assets.Scripts.TapTapAim
 
 
             var instance = Instantiate(HitSliderTransform, PlayArea).GetComponent<HitSlider>();
-            instance.Duration = (float)format.length;
+            instance.DurationMs = (float)format.length;
 
 
             instance.TapTapAimSetup = this;

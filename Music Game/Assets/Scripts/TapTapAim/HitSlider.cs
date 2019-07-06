@@ -22,17 +22,17 @@ namespace Assets.Scripts.TapTapAim
         public Slider Slider { get; set; }
         public int Bounces { get; set; }
         public int Number { get; set; }
-        public float Duration { get; set; }
+        public float DurationMs { get; set; }
         public TimeSpan End { get; set; }
         public float Progress { get; set; }
         public bool GoingForward { get; set; }
-        public bool LookForward { get; set; }
         private bool Ready { get; set; }
         public bool fadeInTriggered { get; set; }
         private float alpha = 0;
         public int AccuracyLaybackMs { get; set; } = 100;
         private bool positionRingDone;
-        private bool isGoingForward { get; set; } = true;
+        private int bounceCompleted;
+        private List<(double, double)> directionOfTravelBetweenRange { get; set; }
         [SerializeField]
         [Range(0.0f, 100.0f)]
         private float TParam;
@@ -45,8 +45,9 @@ namespace Assets.Scripts.TapTapAim
             PerfectHitTime = perfectHitTime;
             Bounces = bounces;
             TapTapAimSetup = TapTapAimSetup;
+            GoingForward = true;
             Ready = true;
-            End = perfectHitTime + TimeSpan.FromMilliseconds(Duration);
+            End = perfectHitTime + TimeSpan.FromMilliseconds(DurationMs);
             TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             SetAlpha(alpha);
             Visibility = new Visibility()
@@ -54,11 +55,18 @@ namespace Assets.Scripts.TapTapAim
                 VisibleStartOffsetMs = 400,
                 VisibleEndOffsetMs = 100
             };
+            var incrementLengthMs = DurationMs / bounces;
+            var rangeStart = perfectHitTime.TotalMilliseconds;
+            for (int i = 0; i < bounces; i++)
+            {
+                directionOfTravelBetweenRange.Add((rangeStart, rangeStart += incrementLengthMs));
+            }
+
             Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(Duration) - TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
+            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(DurationMs) - TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
             sliderPositionRing.PerfectInteractionTime = PerfectHitTime;
             sliderPositionRing.InteractionBoundStart = perfectHitTime;
-            sliderPositionRing.InteractionBoundEnd = perfectHitTime + TimeSpan.FromMilliseconds(Duration);
+            sliderPositionRing.InteractionBoundEnd = perfectHitTime + TimeSpan.FromMilliseconds(DurationMs);
 
 
             gameObject.SetActive(false);
@@ -74,49 +82,42 @@ namespace Assets.Scripts.TapTapAim
                 StartCoroutine(FadeIn());
 
             }
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime + TimeSpan.FromMilliseconds(Duration))
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime + TimeSpan.FromMilliseconds(DurationMs))
             {
                 StartCoroutine(FadeOut());
                 Destroy(gameObject, 1);
             }
 
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime &&!positionRingDone)
+            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime && !positionRingDone)
             {
                 try
                 {
+                    int indexOf = 0;
+                    for (int i = 0; i < directionOfTravelBetweenRange.Count; i++)
+                    {
+                        if (TapTapAimSetup.Tracker.Stopwatch.Elapsed.TotalMilliseconds >= directionOfTravelBetweenRange[i].Item1 &&
+                            TapTapAimSetup.Tracker.Stopwatch.Elapsed.TotalMilliseconds < directionOfTravelBetweenRange[i].Item2)
+                        {
+                            indexOf = i;
+                            break;
+                        }
+                    }
+
+                    GoingForward = indexOf % 2 == 0;
+
                     // currently doesnt consider bounces
-                    TParam = ((float)(TapTapAimSetup.Tracker.Stopwatch.Elapsed - PerfectHitTime).TotalMilliseconds / (Duration));
+                    TParam = ((float)(TapTapAimSetup.Tracker.Stopwatch.Elapsed - PerfectHitTime).TotalMilliseconds / (DurationMs / Bounces + 1));// +1 so 1 bounce means, if bounces is 1, duration is halved.
 
-                    Debug.Log(TParam);
-                    SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(TParam > 1 ? 1 : TParam);
-
-                    //if (SliderPositionRing.transform.localPosition == Slider.Points[pointToFollow])
-                    //{
-                    //    if (isGoingForward)
-                    //        pointToFollow++;
-                    //    else
-                    //        pointToFollow--;
-                    //}
-
-                    //if (pointToFollow == Slider.Points.Count || pointToFollow == -1)
-                    //{
-                    //    if (Bounces == 0)
-                    //    {
-                    //        positionRingDone = true;
-                    //    }
-                    //    else
-                    //    {
-                    //        isGoingForward = !isGoingForward;
-                    //        if (!isGoingForward)
-                    //        {
-                    //            pointToFollow -= 2;
-                    //        }
-                    //        else
-                    //        {
-                    //            pointToFollow += 2;
-                    //        }
-                    //    }
-                    //}
+                    if (TParam > 1)
+                    {
+                        SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(1);
+                    }
+                    else
+                    {
+                        if (GoingForward)
+                            SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(TParam);
+                    }
+                    // handle Tparam direction using 100 -tparam
                 }
                 catch (Exception e)
                 {
