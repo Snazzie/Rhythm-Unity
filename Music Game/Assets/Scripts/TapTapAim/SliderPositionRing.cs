@@ -16,9 +16,10 @@ namespace Assets.Scripts.TapTapAim
         public TimeSpan InteractionBoundStart { get; set; }
 
         public TimeSpan InteractionBoundEnd { get; set; }
+        private bool done { get; set; }
         void Update()
         {
-            if (IsPastLifeBound())
+            if (IsPastLifeBound() && !done)
             {
                 transform.GetComponent<Rigidbody2D>().simulated = false;
                 transform.GetComponent<CircleCollider2D>().enabled = false;
@@ -26,7 +27,7 @@ namespace Assets.Scripts.TapTapAim
                 ((Tracker)TapTapAimSetup.Tracker).IterateInteractionQueue(InteractionID);
                 //Debug.LogError($" HitId:{InteractionID} Not hit attempted.  next hit id: {TapTapAimSetup.Tracker.NextObjToHit}");
                 //Outcome(TapTapAimSetup.Tracker.Stopwatch.Elapsed, false);
-
+                done = true;
             }
         }
         public bool IsPastLifeBound()
@@ -35,7 +36,7 @@ namespace Assets.Scripts.TapTapAim
         }
         public void TryInteract()
         {
-            throw new NotImplementedException();
+            // do nothing for now
         }
 
         public bool IsInInteractionBound(TimeSpan time)

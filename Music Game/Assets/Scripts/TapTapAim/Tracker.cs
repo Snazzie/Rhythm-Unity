@@ -57,8 +57,8 @@ namespace Assets.Scripts.TapTapAim
 
             try
             {
-                if (NextObjToHit < TapTapAimSetup.ObjectInteractQueue.Count)
-                    IterateInteractionQueue();
+                //if (NextObjToHit < TapTapAimSetup.ObjectInteractQueue.Count)
+                //    IterateInteractionQueue();
             }
             catch (Exception e)
             {
