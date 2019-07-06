@@ -54,7 +54,7 @@ namespace Assets.Scripts
                     var objTarget = nextObj.GetComponent<IInteractable>();
                     if (currentTarget != objTarget)
                     {
-                        Debug.Log($"Cursor target = HitId:{objTarget.InteractionID}");
+                        Debug.LogWarning($"Cursor target = HitId:{objTarget.InteractionID}");
                         currentTarget = objTarget;
                     }
 
@@ -100,7 +100,7 @@ namespace Assets.Scripts
                 {
                     if (OnObject != interactable)
                     {
-                        Debug.Log($"ontop of {interactable.InteractionID} {((MonoBehaviour)interactable).name}");
+                        Debug.LogWarning($"ontop of {interactable.InteractionID} {((MonoBehaviour)interactable).name}");
                         OnObject = interactable;
                     }
 
@@ -112,7 +112,7 @@ namespace Assets.Scripts
                             case HitCircle hitCircle:
                                 if (!hitCircle.IsHitAttempted && hitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
                                 {
-                                    Debug.Log("Try hit: " + hitCircle.name);
+                                    Debug.LogWarning("Try hit: " + hitCircle.name);
 
                                     hitCircle.TryInteract();
                                     GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
@@ -123,7 +123,7 @@ namespace Assets.Scripts
                                 {
                                     if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
                                     {
-                                        Debug.Log("Try hit: " + sliderHitCircle.name);
+                                        Debug.LogWarning("Try hit: " + sliderHitCircle.name);
 
                                         sliderHitCircle.TryInteract();
                                         GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
@@ -133,10 +133,10 @@ namespace Assets.Scripts
                                 }
                             case SliderPositionRing sliderPositionRing:
                                 {
-                                    if (sliderPositionRing.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
+                                    if (sliderPositionRing.IsInInteractionBound(tapTapAimSetup.Tracker.Stopwatch.Elapsed))
                                     {
-                                        //Debug.Log("Try interact: " + sliderPositionRing.name);
-                                        //sliderPositionRing.TryInteract();
+                                        Debug.LogWarning("Try interact: " + sliderPositionRing.name);
+                                        sliderPositionRing.TryInteract();
                                         //GameObject.FindWithTag("TapCounter").GetComponent<TapTicker>().IncrementButton(1);
                                     }
 
