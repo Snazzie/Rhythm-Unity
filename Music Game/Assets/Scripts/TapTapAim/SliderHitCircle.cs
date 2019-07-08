@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using Assets.TapTapAim;
 using UnityEngine;
@@ -60,7 +60,7 @@ namespace Assets.Scripts.TapTapAim
         {
             IsHitAttempted = true;
             ((Tracker)TapTapAimSetup.Tracker).IterateInteractionQueue(InteractionID);
-
+            Disappear();
             //throw new NotImplementedException();
         }
 
