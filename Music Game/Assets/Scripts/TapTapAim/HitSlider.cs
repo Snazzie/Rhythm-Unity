@@ -31,7 +31,6 @@ namespace Assets.Scripts.TapTapAim
         private float alpha = 0;
         public int AccuracyLaybackMs { get; set; } = 100;
         private bool positionRingDone;
-        private int bounceCompleted;
         private List<(double, double)> directionOfTravelBetweenRange { get; set; }
         [SerializeField]
         [Range(0.0f, 100.0f)]
@@ -55,6 +54,7 @@ namespace Assets.Scripts.TapTapAim
                 VisibleStartOffsetMs = 400,
                 VisibleEndOffsetMs = 100
             };
+            directionOfTravelBetweenRange = new List<(double, double)>();
             var incrementLengthMs = DurationMs / bounces;
             var rangeStart = perfectHitTime.TotalMilliseconds;
             for (int i = 0; i < bounces; i++)
