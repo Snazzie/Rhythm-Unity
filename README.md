@@ -2,10 +2,13 @@
 OSU Clone made in Unity
 
 There are tests maps bundled with this project using LFS. make sure you pull from LFS also!
-first test map is broken, so try the others.
+
+First test map is broken, so try the others.
+
+See other branches for more recent changes.
 
 Only auto play works atm.
-See other branches for more recent changes.
+
 Feature Goals:
 
 * Ability to import maps from OSU
