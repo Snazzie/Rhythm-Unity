@@ -94,7 +94,7 @@ namespace Assets.Scripts.TapTapAim
     public enum SliderType
     {
         LinearLine,
-        PerfectCurve,
+        QuadraticBezierCurve,
         BezierCurve
     }
 }

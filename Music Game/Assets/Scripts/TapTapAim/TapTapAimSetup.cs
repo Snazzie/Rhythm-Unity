@@ -137,7 +137,7 @@ namespace Assets.Scripts.TapTapAim
         {
 
             var format = new SliderFormat(hitObject);
-            if (format.type == SliderType.PerfectCurve || (!showQuadraticSlider && format.type == SliderType.BezierCurve))
+            if ((!showQuadraticSlider && format.type == SliderType.BezierCurve))
                 return null; // not implemented yet
 
 
@@ -316,14 +316,25 @@ namespace Assets.Scripts.TapTapAim
                         points = LinearLine.GetPoints(new Vector2(x, y), vectors[0]);
                         break;
                     case "P":
-                    //type = SliderType.PerfectCurve;
-                    //break;
+                        {
+                            type = SliderType.QuadraticBezierCurve;
+                            var list = new List<Vector3>(vectors);
+                            list.Insert(0, new Vector3(x, y, 0));
+                            foreach (var v in list)
+                            {
+                                Debug.Log(v.ToString());
+                            }
+                            points = PerfectCurve.GetPoints(list);
+                            break;
+                        }
                     case "B":
-                        type = SliderType.BezierCurve;
-                        var list = new List<Vector3>(vectors);
-                        list.Insert(0, new Vector3(x, y, 0));
-                        points = BezierCurve.GetPoints(list);
-                        break;
+                        {
+                            type = SliderType.BezierCurve;
+                            var list = new List<Vector3>(vectors);
+                            list.Insert(0, new Vector3(x, y, 0));
+                            points = BezierCurve.GetPoints(list);
+                            break;
+                        }
                 }
                 reverseTimes = int.Parse(split[6]);
                 length = double.Parse(split[7]);
