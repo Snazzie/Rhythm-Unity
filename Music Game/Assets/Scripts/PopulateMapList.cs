@@ -12,20 +12,47 @@ namespace Assets.Scripts
 
         public SongListItem SongListItem;
 
-        private string ResourcePath => Application.persistentDataPath + "/GameResources";
+        private string ResourcePath { get; set; }
         // Use this for initialization
         void Start()
         {
-            Maps = new List<MapJson>();
-
-            if (Directory.Exists(ResourcePath))
+            var platform = Application.platform;
+            switch (platform)
             {
-                Directory.Delete(ResourcePath, true);
+                case RuntimePlatform.LinuxEditor:
+                case RuntimePlatform.OSXEditor:
+                case RuntimePlatform.WindowsEditor:
+                    {
+
+                        ResourcePath = Application.streamingAssetsPath + "/GameResources";
+                        //if (Directory.Exists(ResourcePath))
+                        //{
+                        //    Directory.Delete(ResourcePath, true);
+                        //}
+
+                        break;
+                    }
+                case RuntimePlatform.WindowsPlayer:
+                    {
+                        ResourcePath = Application.streamingAssetsPath + "/GameResources";
+                        break;
+                    }
+                case RuntimePlatform.Android:
+                    {
+                        ResourcePath = "jar:file://" + Application.dataPath + "!/assets/GameResources/";
+
+                        break;
+                    }
             }
 
-            Directory.CreateDirectory(ResourcePath);
-            var path = Application.streamingAssetsPath + "/GameResources";
-            Copy(path, ResourcePath);
+
+
+
+
+
+            //Directory.CreateDirectory(ResourcePath);
+            //var path = Application.ass + "/GameResources";
+            //Copy(path, ResourcePath);
 
 
             Populate();
@@ -46,6 +73,8 @@ namespace Assets.Scripts
 
         public void Populate()
         {
+            Maps = new List<MapJson>();
+
             var targetDirectory = ResourcePath + @"\Maps";
 
             var mapPaths = Directory.GetDirectories(targetDirectory);
