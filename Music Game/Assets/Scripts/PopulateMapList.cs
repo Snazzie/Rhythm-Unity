@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using UnityEngine;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Assets.Scripts
 {
@@ -11,9 +10,13 @@ namespace Assets.Scripts
         private List<MapJson> Maps;
 
         public SongListItem SongListItem;
-
+        private string mapsDir;
+        private string mapsDirIn;
+        private string mapJsonSubPath;
         private string ResourcePath { get; set; }
+        private string AssetDownloadUrl = "https://github.com/acoop133/Rhythm-Unity/releases/download/Asset%2F0.1/MapsZip.zip";
         // Use this for initialization
+        private System.Collections.IEnumerator coroutine;
         void Start()
         {
             var platform = Application.platform;
@@ -29,18 +32,25 @@ namespace Assets.Scripts
                         //{
                         //    Directory.Delete(ResourcePath, true);
                         //}
-
+                        mapsDir = ResourcePath + @"/Maps";
+                        mapsDirIn = mapsDir + "/";
+                        mapJsonSubPath = @"/Info.json";
                         break;
                     }
                 case RuntimePlatform.WindowsPlayer:
                     {
                         ResourcePath = Application.streamingAssetsPath + "/GameResources";
+                        mapsDir = ResourcePath + @"\Maps";
+                        mapsDirIn = mapsDir + @"\";
+                        mapJsonSubPath = @"\Info.json";
                         break;
                     }
                 case RuntimePlatform.Android:
                     {
-                        ResourcePath = "jar:file://" + Application.dataPath + "!/assets/GameResources/";
-
+                        ResourcePath = Application.persistentDataPath + "!/assets/GameResources";
+                        mapsDir = ResourcePath + "/Maps";
+                        mapsDirIn = mapsDir + "/";
+                        mapJsonSubPath = "/Info.json";
                         break;
                     }
             }
@@ -49,10 +59,12 @@ namespace Assets.Scripts
 
 
 
+            if (!Directory.Exists(ResourcePath))
+            {
+                Directory.CreateDirectory(ResourcePath);
 
-            //Directory.CreateDirectory(ResourcePath);
-            //var path = Application.ass + "/GameResources";
-            //Copy(path, ResourcePath);
+            }
+
 
 
             Populate();
@@ -75,22 +87,81 @@ namespace Assets.Scripts
         {
             Maps = new List<MapJson>();
 
-            var targetDirectory = ResourcePath + @"\Maps";
+            if (!Directory.Exists(mapsDir))
+            {
+                Directory.CreateDirectory(mapsDir);
+                //var path = Application.streamingAssetsPath + "/GameResources/Maps";
+                //Copy(path, mapsDir);
+            }
+            var mapPaths = Directory.GetDirectories(mapsDir);
+            if (mapPaths.Length == 0)
+            {
+                System.Net.WebClient client = new System.Net.WebClient();
+                DownloadMapAssetFile();
 
-            var mapPaths = Directory.GetDirectories(targetDirectory);
+
+            }
+
+
             foreach (var mapPath in mapPaths)
             {
-                var json = File.ReadAllText(mapPath + @"\Info.json");
+                var json = File.ReadAllText(mapPath + mapJsonSubPath);
                 var map = JsonUtility.FromJson<MapJson>(json);
-                map.filePath = map.filePath.Insert(0, targetDirectory + @"\");
+                map.filePath = map.filePath.Insert(0, mapsDirIn);
                 Maps.Add(map);
 
             }
             RefreshDisplay();
 
         }
+        private bool isDownloading = false;
+        private string downloadErrorMsg;
+        private string progress;
+        void DownloadMapAssetFile()
+        {
+            System.Net.WebClient client = new System.Net.WebClient();
+            //client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(DownloadFileCompleted);
+            //client.DownloadFileAsync(new Uri(AssetDownloadUrl), $"{ResourcePath}/MapsZip.zip");
+            //client.DownloadProgressChanged += Client_DownloadProgressChanged;
+            //isDownloading = true;
 
+            //while (isDownloading)
+            //{
+            //    var progressNow = progress;
 
+            //    if (!isDownloading)
+            //    {
+            //        break;
+            //    }
+            //}
+            //if (downloadErrorMsg != null)
+            //{
+            //    Debug.LogError(downloadErrorMsg);
+            //}
+            //else
+            //{
+            //    Decompress(new FileInfo($"{mapsDir}/MapsZip.zip"));
+            //    File.Delete($"{mapsDir}/MapsZip.zip");
+            //}
+            FastZip fastZip = new FastZip();
+            fastZip.ExtractZip(ResourcePath + @"/maps.zip", ResourcePath+@"/Maps", null);
+            Debug.Log("Successfully Extracted Maps");
+            //client.DownloadFile(new Uri(AssetDownloadUrl), $"{mapsDir}/MapsZip.zip");
+            //File.Delete($"{mapsDir}/MapsZip.zip");
+        }
+
+        private void Client_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+        {
+            progress = e.ProgressPercentage.ToString();
+        }
+
+        void DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            isDownloading = false;
+            if (e.Error != null)
+                downloadErrorMsg = e.Error.Message;
+
+        }
         public void RefreshDisplay()
         {
             var list = GameObject.Find("SongList").transform;
@@ -105,7 +176,7 @@ namespace Assets.Scripts
                 i.UpdateText();
             }
         }
-
+       
 
     }
     public class MapJson
@@ -133,4 +204,6 @@ namespace Assets.Scripts
             public int sliderTickRate;
         }
     }
+
+
 }

@@ -17,4 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TapTapAim.unity
     guid: 4fd84d1e8ab02b14bb23158dc7af26e0
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 143456383abbe1747b3f6cf80f8d6f26,
+      type: 2}
