@@ -35,3 +35,5 @@ sysinfo.txt
 *.apk
 *.unitypackage
 Music Game/MemoryCaptures/
+
+Music Game/Assets/StreamingAssets/GameResources/
