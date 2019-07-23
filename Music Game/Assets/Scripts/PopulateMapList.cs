@@ -101,7 +101,7 @@ namespace Assets.Scripts
 
 
             }
-
+            mapPaths = Directory.GetDirectories(mapsDir);
 
             foreach (var mapPath in mapPaths)
             {
