@@ -10,60 +10,13 @@ namespace Assets.Scripts
         private List<MapJson> Maps;
 
         public SongListItem SongListItem;
-        private string mapsDir;
-        private string mapsDirIn;
-        private string mapJsonSubPath;
-        private string ResourcePath { get; set; }
+
         private string AssetDownloadUrl = "https://github.com/acoop133/Rhythm-Unity/releases/download/Asset%2F0.1/MapsZip.zip";
         // Use this for initialization
         private System.Collections.IEnumerator coroutine;
         void Start()
         {
-            var platform = Application.platform;
-            switch (platform)
-            {
-                case RuntimePlatform.LinuxEditor:
-                case RuntimePlatform.OSXEditor:
-                case RuntimePlatform.WindowsEditor:
-                    {
 
-                        ResourcePath = Application.streamingAssetsPath + "/GameResources";
-                        //if (Directory.Exists(ResourcePath))
-                        //{
-                        //    Directory.Delete(ResourcePath, true);
-                        //}
-                        mapsDir = ResourcePath + @"/Maps";
-                        mapsDirIn = mapsDir + "/";
-                        mapJsonSubPath = @"/Info.json";
-                        break;
-                    }
-                case RuntimePlatform.WindowsPlayer:
-                    {
-                        ResourcePath = Application.streamingAssetsPath + "/GameResources";
-                        mapsDir = ResourcePath + @"\Maps";
-                        mapsDirIn = mapsDir + @"\";
-                        mapJsonSubPath = @"\Info.json";
-                        break;
-                    }
-                case RuntimePlatform.Android:
-                    {
-                        ResourcePath = Application.persistentDataPath + "!/assets/GameResources";
-                        mapsDir = ResourcePath + "/Maps";
-                        mapsDirIn = mapsDir + "/";
-                        mapJsonSubPath = "/Info.json";
-                        break;
-                    }
-            }
-
-
-
-
-
-            if (!Directory.Exists(ResourcePath))
-            {
-                Directory.CreateDirectory(ResourcePath);
-
-            }
 
 
 
@@ -85,29 +38,30 @@ namespace Assets.Scripts
 
         public void Populate()
         {
+            var gameLaunchParams = GameLaunchSetup.Instance;
             Maps = new List<MapJson>();
 
-            if (!Directory.Exists(mapsDir))
+            if (!Directory.Exists(gameLaunchParams.mapsDir))
             {
-                Directory.CreateDirectory(mapsDir);
+                Directory.CreateDirectory(gameLaunchParams.mapsDir);
                 //var path = Application.streamingAssetsPath + "/GameResources/Maps";
                 //Copy(path, mapsDir);
             }
-            var mapPaths = Directory.GetDirectories(mapsDir);
+            var mapPaths = Directory.GetDirectories(gameLaunchParams.mapsDir);
             if (mapPaths.Length == 0)
             {
                 System.Net.WebClient client = new System.Net.WebClient();
-                DownloadMapAssetFile();
-
+                Utilities.AssetHelper.DownloadMapAssetFile(gameLaunchParams.ResourcePath);
+                Utilities.AssetHelper.ExtractZip(gameLaunchParams.ResourcePath + @"/maps.zip", gameLaunchParams.ResourcePath + @"/Maps");
 
             }
-            mapPaths = Directory.GetDirectories(mapsDir);
+            mapPaths = Directory.GetDirectories(gameLaunchParams.mapsDir);
 
             foreach (var mapPath in mapPaths)
             {
-                var json = File.ReadAllText(mapPath + mapJsonSubPath);
+                var json = File.ReadAllText(mapPath + gameLaunchParams.mapJsonSubPath);
                 var map = JsonUtility.FromJson<MapJson>(json);
-                map.filePath = map.filePath.Insert(0, mapsDirIn);
+                map.filePath = map.filePath.Insert(0, gameLaunchParams.mapsDirIn);
                 Maps.Add(map);
 
             }
@@ -117,38 +71,7 @@ namespace Assets.Scripts
         private bool isDownloading = false;
         private string downloadErrorMsg;
         private string progress;
-        void DownloadMapAssetFile()
-        {
-            System.Net.WebClient client = new System.Net.WebClient();
-            //client.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(DownloadFileCompleted);
-            //client.DownloadFileAsync(new Uri(AssetDownloadUrl), $"{ResourcePath}/MapsZip.zip");
-            //client.DownloadProgressChanged += Client_DownloadProgressChanged;
-            //isDownloading = true;
-
-            //while (isDownloading)
-            //{
-            //    var progressNow = progress;
-
-            //    if (!isDownloading)
-            //    {
-            //        break;
-            //    }
-            //}
-            //if (downloadErrorMsg != null)
-            //{
-            //    Debug.LogError(downloadErrorMsg);
-            //}
-            //else
-            //{
-            //    Decompress(new FileInfo($"{mapsDir}/MapsZip.zip"));
-            //    File.Delete($"{mapsDir}/MapsZip.zip");
-            //}
-            FastZip fastZip = new FastZip();
-            fastZip.ExtractZip(ResourcePath + @"/maps.zip", ResourcePath+@"/Maps", null);
-            Debug.Log("Successfully Extracted Maps");
-            //client.DownloadFile(new Uri(AssetDownloadUrl), $"{mapsDir}/MapsZip.zip");
-            //File.Delete($"{mapsDir}/MapsZip.zip");
-        }
+        
 
         private void Client_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
