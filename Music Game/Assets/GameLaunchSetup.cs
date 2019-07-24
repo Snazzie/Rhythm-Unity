@@ -28,8 +28,7 @@ namespace Assets
         private GameLaunchSetup()
         {
             Application.targetFrameRate = 300;
-
-
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
             var platform = Application.platform;
             switch (platform)
             {

@@ -11,7 +11,6 @@ namespace Assets.Scripts
 
         public SongListItem SongListItem;
 
-        private string AssetDownloadUrl = "https://github.com/acoop133/Rhythm-Unity/releases/download/Asset%2F0.1/MapsZip.zip";
         // Use this for initialization
         private System.Collections.IEnumerator coroutine;
         void Start()
@@ -36,7 +35,7 @@ namespace Assets.Scripts
                 Copy(directory, Path.Combine(targetDir, Path.GetFileName(directory)));
         }
 
-        public void Populate()
+        public async void Populate()
         {
             var gameLaunchParams = GameLaunchSetup.Instance;
             Maps = new List<MapJson>();
@@ -50,9 +49,12 @@ namespace Assets.Scripts
             var mapPaths = Directory.GetDirectories(gameLaunchParams.mapsDir);
             if (mapPaths.Length == 0)
             {
-                System.Net.WebClient client = new System.Net.WebClient();
-                Utilities.AssetHelper.DownloadMapAssetFile(gameLaunchParams.ResourcePath);
-                Utilities.AssetHelper.ExtractZip(gameLaunchParams.ResourcePath + @"/maps.zip", gameLaunchParams.ResourcePath + @"/Maps");
+                if (!File.Exists(gameLaunchParams.ResourcePath + @"/MapsZip.zip"))
+                    Utilities.AssetHelper.DownloadMapAssetFile(gameLaunchParams.ResourcePath);
+                else
+                {
+                    Utilities.AssetHelper.ExtractZip(gameLaunchParams.ResourcePath + @"/MapsZip.zip", gameLaunchParams.ResourcePath);
+                }
 
             }
             mapPaths = Directory.GetDirectories(gameLaunchParams.mapsDir);
@@ -68,23 +70,7 @@ namespace Assets.Scripts
             RefreshDisplay();
 
         }
-        private bool isDownloading = false;
-        private string downloadErrorMsg;
-        private string progress;
-        
 
-        private void Client_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
-        {
-            progress = e.ProgressPercentage.ToString();
-        }
-
-        void DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            isDownloading = false;
-            if (e.Error != null)
-                downloadErrorMsg = e.Error.Message;
-
-        }
         public void RefreshDisplay()
         {
             var list = GameObject.Find("SongList").transform;
@@ -99,7 +85,7 @@ namespace Assets.Scripts
                 i.UpdateText();
             }
         }
-       
+
 
     }
     public class MapJson
