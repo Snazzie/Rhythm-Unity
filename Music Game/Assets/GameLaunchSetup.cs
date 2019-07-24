@@ -10,6 +10,7 @@ namespace Assets
         public string mapsDirIn { get; private set; }
         public string mapJsonSubPath { get; private set; }
         public string ResourcePath { get; private set; }
+        public RuntimePlatform platform { get; private set; }
         // Use this for initialization
 
         private static GameLaunchSetup instance = null;
@@ -29,7 +30,7 @@ namespace Assets
         {
             Application.targetFrameRate = 300;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            var platform = Application.platform;
+            platform = Application.platform;
             switch (platform)
             {
                 case RuntimePlatform.LinuxEditor:

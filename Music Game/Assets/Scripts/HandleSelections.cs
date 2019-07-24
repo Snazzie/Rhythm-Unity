@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -28,16 +29,25 @@ namespace Assets.Scripts
         }
         IEnumerator GetClip(string path)
         {
-
-            var www = new WWW(path);
-            AudioClip ac = www.GetAudioClip(true, false, AudioType.WAV);
-
-            while (ac.loadState != AudioDataLoadState.Loaded)
+            
+            if(GameLaunchSetup.Instance.platform == RuntimePlatform.Android)
             {
-                yield return null;
+                path = path.Insert(0, "file:///");
             }
-            Debug.Log("Clip Load finished");
-            audioclip = ac;
+            Debug.Log(GameLaunchSetup.Instance.platform.ToString());
+            Debug.Log(path);
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
+            {
+                yield return www.SendWebRequest();
+                if (www.isNetworkError)
+                {
+                    Debug.LogError(www.error);
+                }
+
+                Debug.Log("Clip Load finished");
+                audioclip = DownloadHandlerAudioClip.GetContent(www);
+            }
+            
 
         }
         IEnumerator SetUI()
