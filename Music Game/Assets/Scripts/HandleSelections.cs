@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -8,6 +10,7 @@ namespace Assets.Scripts
     {
         public SongListItem Selected { get; set; } 
         private AudioSource AudioSource { get; set; }
+        private AudioClip audioclip;
         // Use this for initialization
         void Start()
         {
@@ -19,32 +22,51 @@ namespace Assets.Scripts
 
         public void UpdateMapInfoPanel()
         {
-            var panel = transform.GetChild(0).transform;
-            var clip = GetClip(Selected.MapJson.filePath + @"\Audio.wav");
-
-            panel.GetChild(0).GetComponent<Text>().text = Selected.MapJson.artist + " - " + Selected.MapJson.title;
-            panel.GetChild(1).GetComponent<Text>().text = "mapped by " + Selected.MapJson.mapCreator;
-            var timespan = TimeSpan.FromSeconds(clip.length);
-            panel.GetChild(2).GetComponent<Text>().text = "Status: " + Selected.MapJson.status + "  Length: " + 
-                                                          string.Format("{0:00}:{1:00}",timespan.Minutes,timespan.Seconds) + "  BPM: " + Selected.MapJson.bpm;
-            panel.GetChild(3).GetComponent<Text>().text = "Complexity: " + Selected.MapJson.complexity + "  Objects: " + Selected.MapJson.map.Count;
-            PlaySong(clip);
-            GameStartParameters.MapJson.audioClip = clip;
-            GameStartParameters.MapJson.map = Selected.MapJson.map;
+            
+            StartCoroutine(GetClip(Selected.MapJson.filePath + @"/Audio.wav"));
+            StartCoroutine(SetUI());
+            
         }
-        public static AudioClip GetClip(string path)
+        IEnumerator GetClip(string path)
+        {
+            
+            if(GameLaunchSetup.Instance.platform == RuntimePlatform.Android)
+            {
+                path = path.Insert(0, "file:///");
+            }
+            Debug.Log(GameLaunchSetup.Instance.platform.ToString());
+            Debug.Log(path);
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
+            {
+                yield return www.SendWebRequest();
+                if (www.isNetworkError)
+                {
+                    Debug.LogError(www.error);
+                }
+
+                Debug.Log("Clip Load finished");
+                audioclip = DownloadHandlerAudioClip.GetContent(www);
+            }
+            
+
+        }
+        IEnumerator SetUI()
         {
 
-            var www = new WWW(path);
-            AudioClip audioclip = www.GetAudioClip(true, false, AudioType.WAV);
-
-            while (audioclip.loadState != AudioDataLoadState.Loaded)
+            while(audioclip == null)
             {
-                // wait
+                yield return null;
             }
-            Debug.Log("Clip Load finished");
-            return audioclip;
-
+            var panel = transform.GetChild(0).transform;
+            panel.GetChild(0).GetComponent<Text>().text = Selected.MapJson.artist + " - " + Selected.MapJson.title;
+            panel.GetChild(1).GetComponent<Text>().text = "mapped by " + Selected.MapJson.mapCreator;
+            var timespan = TimeSpan.FromSeconds(audioclip.length);
+            panel.GetChild(2).GetComponent<Text>().text = "Status: " + Selected.MapJson.status + "  Length: " +
+                                                          string.Format("{0:00}:{1:00}", timespan.Minutes, timespan.Seconds) + "  BPM: " + Selected.MapJson.bpm;
+            panel.GetChild(3).GetComponent<Text>().text = "Complexity: " + Selected.MapJson.complexity + "  Objects: " + Selected.MapJson.map.Count;
+            PlaySong(audioclip);
+            GameStartParameters.MapJson.audioClip = audioclip;
+            GameStartParameters.MapJson.map = Selected.MapJson.map;
         }
 
 

@@ -30,3 +30,42 @@ Update Mode: updateDependencies
 The following packages were updated:
   com.unity.package-manager-ui from version 2.1.1 to 2.1.2
   com.unity.postprocessing from version 2.1.2 to 2.1.4
+
+=== Mon May 20 22:09:13 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were added:
+  com.unity.2d.tilemap@1.0.0
+  com.unity.ext.nunit@1.0.0
+  com.unity.test-framework@1.0.12
+  com.unity.2d.sprite@1.0.0
+  com.unity.ide.vscode@1.0.4
+  com.unity.ide.visualstudio@1.0.5
+  com.unity.ide.rider@1.0.4
+  com.unity.ugui@1.0.0
+  com.unity.modules.androidjni@1.0.0
+The following packages were updated:
+  com.unity.package-manager-ui from version 2.1.2 to 2.2.0
+
+=== Sat Jun 29 19:04:50 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.ide.visualstudio from version 1.0.10 to 1.0.11
+  com.unity.test-framework from version 1.0.13 to 1.0.14
+  com.unity.timeline from version 1.0.0 to 1.1.0
+The following packages were removed:
+  com.unity.package-manager-ui@2.2.0
+
+=== Sat Jul  6 14:04:36 2019
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.addressables from version 0.8.6-preview to 1.1.4-preview
+  com.unity.test-framework from version 1.0.14 to 1.0.16

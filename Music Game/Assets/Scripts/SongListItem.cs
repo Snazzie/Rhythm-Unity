@@ -19,7 +19,7 @@ namespace Assets.Scripts
             ob.Selected = this;
             ob.UpdateMapInfoPanel();
             GameObject.Find("Canvas").transform.GetComponent<Image>().sprite =
-                LoadNewSprite(MapJson.filePath + @"\Background.jpg");
+                LoadNewSprite(MapJson.filePath + @"/Background.jpg");
         }
         public void UpdateText ()
         {

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using UnityEngine;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Assets.Scripts
 {
@@ -12,20 +11,12 @@ namespace Assets.Scripts
 
         public SongListItem SongListItem;
 
-        private string ResourcePath => Application.persistentDataPath + "/GameResources";
         // Use this for initialization
+        private System.Collections.IEnumerator coroutine;
         void Start()
         {
-            Maps = new List<MapJson>();
 
-            if (Directory.Exists(ResourcePath))
-            {
-                Directory.Delete(ResourcePath, true);
-            }
 
-            Directory.CreateDirectory(ResourcePath);
-            var path = Application.streamingAssetsPath + "/GameResources";
-            Copy(path, ResourcePath);
 
 
             Populate();
@@ -44,23 +35,41 @@ namespace Assets.Scripts
                 Copy(directory, Path.Combine(targetDir, Path.GetFileName(directory)));
         }
 
-        public void Populate()
+        public async void Populate()
         {
-            var targetDirectory = ResourcePath + @"\Maps";
+            var gameLaunchParams = GameLaunchSetup.Instance;
+            Maps = new List<MapJson>();
 
-            var mapPaths = Directory.GetDirectories(targetDirectory);
+            if (!Directory.Exists(gameLaunchParams.mapsDir))
+            {
+                Directory.CreateDirectory(gameLaunchParams.mapsDir);
+                //var path = Application.streamingAssetsPath + "/GameResources/Maps";
+                //Copy(path, mapsDir);
+            }
+            var mapPaths = Directory.GetDirectories(gameLaunchParams.mapsDir);
+            if (mapPaths.Length == 0)
+            {
+                if (!File.Exists(gameLaunchParams.ResourcePath + @"/MapsZip.zip"))
+                    Utilities.AssetHelper.DownloadMapAssetFile(gameLaunchParams.ResourcePath);
+                else
+                {
+                    Utilities.AssetHelper.ExtractZip(gameLaunchParams.ResourcePath + @"/MapsZip.zip", gameLaunchParams.ResourcePath);
+                }
+
+            }
+            mapPaths = Directory.GetDirectories(gameLaunchParams.mapsDir);
+
             foreach (var mapPath in mapPaths)
             {
-                var json = File.ReadAllText(mapPath + @"\Info.json");
+                var json = File.ReadAllText(mapPath + gameLaunchParams.mapJsonSubPath);
                 var map = JsonUtility.FromJson<MapJson>(json);
-                map.filePath = map.filePath.Insert(0, targetDirectory + @"\");
+                map.filePath = map.filePath.Insert(0, gameLaunchParams.mapsDirIn);
                 Maps.Add(map);
 
             }
             RefreshDisplay();
 
         }
-
 
         public void RefreshDisplay()
         {
@@ -104,4 +113,6 @@ namespace Assets.Scripts
             public int sliderTickRate;
         }
     }
+
+
 }
