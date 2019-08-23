@@ -1,5 +1,6 @@
 # Music-Game
 OSU Clone made in Unity
+<a style="float: right" href="https://www.codefactor.io/repository/github/acoop133/rhythm-unity"><img src="https://www.codefactor.io/repository/github/acoop133/rhythm-unity/badge" alt="CodeFactor" /></a>
 
 There are tests maps bundled with this project using LFS. make sure you pull from LFS also!
 
