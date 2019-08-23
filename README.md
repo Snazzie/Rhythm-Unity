@@ -5,7 +5,6 @@ OSU Clone made in Unity
 
 There are tests maps bundled with this project using LFS. make sure you pull from LFS also!
 
-First test map is broken, so try the others.
 
 See other branches for more recent changes.
 
