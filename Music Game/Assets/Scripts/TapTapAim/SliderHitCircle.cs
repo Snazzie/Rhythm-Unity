@@ -27,8 +27,7 @@ namespace Assets.Scripts.TapTapAim
 
         public TimeSpan InteractionBoundEnd { get; set; }
 
-        private YieldInstruction instruction = new YieldInstruction();
-
+        private double shrinkDuration;
         public void Disappear()
         {
             gameObject.SetActive(false);
@@ -53,6 +52,8 @@ namespace Assets.Scripts.TapTapAim
             Visibility.VisibleStartStart = PerfectInteractionTime - TimeSpan.FromMilliseconds(Visibility.VisibleStartOffsetMs);
             Visibility.VisibleEndStart = PerfectInteractionTime + TimeSpan.FromMilliseconds(Visibility.VisibleEndOffsetMs);
             OnInteract += SliderHitCircle_OnHitOrShowSliderTimingCircleEvent;
+            ringStartScale = transform.GetChild(3).GetComponent<RectTransform>().localScale.x;
+            shrinkDuration = (PerfectInteractionTime - Visibility.VisibleStartStart).TotalMilliseconds;
             gameObject.SetActive(false);
         }
 
@@ -68,9 +69,8 @@ namespace Assets.Scripts.TapTapAim
         {
             if (!IsHitAttempted)
             {
-                if (ParentSlider.fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
+                if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
                 {
-
                     StartCoroutine(TimingRingShrink());
                 }
 
@@ -121,7 +121,7 @@ namespace Assets.Scripts.TapTapAim
         }
         public bool IsInAutoPlayHitBound(TimeSpan time)
         {
-            if (time >= PerfectInteractionTime - TimeSpan.FromMilliseconds(20) && time <= PerfectInteractionTime + TimeSpan.FromMilliseconds(AccuracyLaybackMs))
+            if (time >= PerfectInteractionTime - TimeSpan.FromMilliseconds(10) && time <= PerfectInteractionTime + TimeSpan.FromMilliseconds(50))
             {
                 return true;
             }
@@ -163,26 +163,28 @@ namespace Assets.Scripts.TapTapAim
         }
 
 
-
+        float shrinkTParam = 0;
+        bool shrinkDone;
+        float ringStartScale;
+        float shrinkMinScale = 1.05f;
         IEnumerator TimingRingShrink()
         {
-            Visibility.fadeInTriggered = true;
-            float elapsedTime = 0.0f;
 
-            while (elapsedTime < 1)
+            if (shrinkDone)
+                yield return null;
+
+            shrinkTParam = Math.Abs((float)((TapTapAimSetup.Tracker.Stopwatch.Elapsed - PerfectInteractionTime).TotalMilliseconds / shrinkDuration));
+
+            if (shrinkTParam >= 1)
             {
-                yield return instruction;
-                elapsedTime += Time.deltaTime;
-                var scale = 2f - Mathf.Clamp01(elapsedTime * 2.4f);
-                if (scale >= 1.1f)
-                {
-                    SetHitRingScale(scale);
-                }
-                else
-                {
-                    SetHitRingScale(1.1f);
-                }
+                shrinkTParam = 1;
+                shrinkDone = true;
             }
+            else if (shrinkTParam < 0)
+                shrinkTParam = 0;
+
+            var scale = shrinkMinScale + shrinkTParam * (ringStartScale - shrinkMinScale);
+            SetHitRingScale(scale);
         }
 
         private void Outcome(TimeSpan time, bool hit)
