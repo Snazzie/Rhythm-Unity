@@ -20,7 +20,7 @@ namespace Assets.Scripts.TapTapAim
 
         private bool showSliders { get; } = true;
         private bool showLinerSlider { get; } = true;
-        private bool showQuadraticSlider { get; } = false;
+        private bool showQuadraticSlider { get; } = true;
         private bool showCircles { get; } = true;
         public bool isAutoPlay { get; } = true;
 
@@ -146,11 +146,11 @@ namespace Assets.Scripts.TapTapAim
 
 
             instance.TapTapAimSetup = this;
-
-            instance.transform.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
-            instance.GetComponent<RectTransform>().sizeDelta = new Vector3(0, 0, -0.1f);
-            instance.GetComponent<RectTransform>().anchorMin = new Vector2(0f, 0f);
-            instance.GetComponent<RectTransform>().anchorMax = new Vector2(0f, 0f);
+            var transform = instance.transform.GetComponent<RectTransform>();
+            transform.anchoredPosition = new Vector3(0, 0, 0);
+            transform.sizeDelta = new Vector3(0, 0, -0.1f);
+            transform.anchorMin = new Vector2(0f, 0f);
+            transform.anchorMax = new Vector2(0f, 0f);
 
             instance.transform.localScale = new Vector2(1f, 1f);
 

@@ -71,7 +71,6 @@ MonoBehaviour:
     m_AssemblyName: 
     m_ClassName: 
   m_ActivePlayerDataBuilderIndex: 3
-  m_ActivePlayModeDataBuilderIndex: 0
   m_DataBuilders:
   - {fileID: 11400000, guid: d1c94f8fdd1b6f04f8d50321aa3685b6, type: 2}
   - {fileID: 11400000, guid: a95700bc99d6d48409e7628855f6e0fa, type: 2}
