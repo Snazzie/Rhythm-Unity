@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Assets.TapTapAim;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,15 +21,15 @@ namespace Assets.Scripts.TapTapAim
         public float HealthAddedPerHit { get; } = 7;
         public float HitAccuracy { get; private set; }
         public List<TimeSpan> BreakPeriodQueue { get; private set; } = new List<TimeSpan>();
-        public int StartOffset { get; set; }
+        public double StartOffsetMs { get; set; }
         public int NextObjToHit { get; set; } = 0;
         public int NextObjToActivateID { get; set; }
         public int Combo { get; private set; }
         public float Health { get; private set; } = 100;
         public bool IsGameReady { get; set; }
         public bool GameFinished { get; private set; }
-        public Stopwatch Stopwatch { get; } = new Stopwatch();
-
+        private Stopwatch Stopwatch { get; } = new Stopwatch();
+        public bool UseMusicTimeline { get; set; }
         private void Start()
         {
 
@@ -64,12 +65,15 @@ namespace Assets.Scripts.TapTapAim
             {
                 Debug.LogError(e);
             }
-            if (IsGameReady && OffsetOver() && !GameFinished)
+            if (IsGameReady && UseMusicTimeline && !GameFinished)
             {
-
                 if (!TapTapAimSetup.MusicSource.isPlaying)
                     TapTapAimSetup.MusicSource.Play();
                 HandleHealth();
+            }
+            else
+            {
+                GetTime();
             }
 
             CalculateAccuracy();
@@ -77,11 +81,11 @@ namespace Assets.Scripts.TapTapAim
             if (Input.GetKey(KeyCode.Escape))
                 SceneManager.LoadScene("MapSelect");
             else if (Input.GetKey(KeyCode.Space))
-                if (TimeSpan.FromSeconds(TapTapAimSetup.MusicSource.time) - TimeSpan.FromSeconds(5) <
-                    TapTapAimSetup.ObjectInteractQueue[0].Visibility.VisibleStartStart && !SkippedToStart)
+                if ((TapTapAimSetup.MusicSource.time * 1000) - 5000 <
+                    TapTapAimSetup.ObjectInteractQueue[0].Visibility.VisibleStartStartTimeInMs && !SkippedToStart)
                 {
                     SkippedToStart = true;
-                    TapTapAimSetup.MusicSource.time = (float)TapTapAimSetup.ObjectInteractQueue[0].Visibility.VisibleStartStart.TotalSeconds - 5f;
+                    TapTapAimSetup.MusicSource.time = (float)TapTapAimSetup.ObjectInteractQueue[0].Visibility.VisibleStartStartTimeInMs - 2000f;
                 }
 
         }
@@ -106,18 +110,6 @@ namespace Assets.Scripts.TapTapAim
                 Debug.LogError(e);
             }
         }
-
-        private bool OffsetOver()
-        {
-            if (Stopwatch.Elapsed < TimeSpan.FromMilliseconds(StartOffset) && StartOffset != 0) return false;
-
-            return true;
-        }
-
-        private TimeSpan TimeNormalized()
-        {
-            return TapTapAimSetup.Offset != 0 ? Stopwatch.Elapsed - TimeSpan.FromMilliseconds(TapTapAimSetup.Offset) : Stopwatch.Elapsed;
-        }
         private void IterateObjectQueue()
         {
             //if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(500) >= ((IObject)TapTapAimSetup.ObjectInteractQueue[nextObjectID]).VisibleStartStart)
@@ -125,7 +117,7 @@ namespace Assets.Scripts.TapTapAim
             //    ((MonoBehaviour)TapTapAimSetup.ObjectInteractQueue[nextObjectID]).gameObject.SetActive(true);
             //    nextObjectID++;
             //}
-            if (Stopwatch.Elapsed + TimeSpan.FromMilliseconds(200) >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStart)
+            if (Stopwatch.Elapsed.TotalMilliseconds + 200 >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStartTimeInMs)
             {
                 ((MonoBehaviour)(TapTapAimSetup).ObjActivationQueue[NextObjToActivateID]).gameObject.SetActive(true);
                 NextObjToActivateID++;
@@ -135,6 +127,30 @@ namespace Assets.Scripts.TapTapAim
                 GameFinished = true;
         }
 
+        
+        /// <summary>
+        /// Time in Ms
+        /// Can be negative if offset is applied
+        /// </summary>
+        /// <returns></returns>
+        public double GetTime()
+        {
+            if (UseMusicTimeline)
+            {
+                return TapTapAimSetup.MusicSource.time * 1000;
+            }
+
+            if (Stopwatch.Elapsed.TotalMilliseconds - StartOffsetMs >= 0)
+            {
+                UseMusicTimeline = true;
+                return TapTapAimSetup.MusicSource.time * 1000;
+            }
+            else
+            {
+                return Stopwatch.Elapsed.TotalMilliseconds - StartOffsetMs;
+            }
+
+        }
         public void IterateInteractionQueue(int? thisId = null)
         {
             if (thisId != null)
