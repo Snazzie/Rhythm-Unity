@@ -18,6 +18,7 @@ namespace Assets.Scripts.TapTapAim
         public Transform SliderPositionRing;
         public Transform SliderHitCircleTransform;
 
+        public static int visibleStartOffsetMs = 400;
         private bool showSliders { get; } = true;
         private bool showLinerSlider { get; } = true;
         private bool showQuadraticSlider { get; } = true;
@@ -39,8 +40,8 @@ namespace Assets.Scripts.TapTapAim
         /// <summary>
         /// offset for start of map to give player some time to get ready
         /// </summary>
-        public int Offset { get; private set; } = 4000;
-        private bool AddOffset { get; set; }
+        public int OffsetForMapStartMs { get; private set; } = 2000;
+        public bool AddOffset { get; set; }
 
         public AudioSource MusicSource { get; set; }
 
@@ -59,10 +60,14 @@ namespace Assets.Scripts.TapTapAim
             Tracker.TapTapAimSetup = this;
 
             if (TimeSpan.FromMilliseconds(int.Parse(GameStartParameters.MapJson.map[0].Split(',')[2])) <
-                TimeSpan.FromMilliseconds(Offset))
+                TimeSpan.FromMilliseconds(OffsetForMapStartMs + visibleStartOffsetMs))
             {
                 AddOffset = true;
-                Tracker.StartOffset = Offset;
+                Tracker.StartOffsetMs = OffsetForMapStartMs;
+            }
+            else
+            {
+                Tracker.UseMusicTimeline = true;
             }
 
             InstantiateObjects();
@@ -168,7 +173,7 @@ namespace Assets.Scripts.TapTapAim
             {
                 x = format.x,
                 y = format.y,
-                time = format.time,
+                timeInMs = format.timeInMs,
                 @group = format.group
             };
 
@@ -209,9 +214,10 @@ namespace Assets.Scripts.TapTapAim
             return sliderInstance;
         }
 
-        private TimeSpan GetPerfectTime(Format format)
+        private double GetPerfectTime(Format format)
         {
-            return TimeSpan.FromMilliseconds(format.time + (AddOffset ? Offset : 0));
+            return format.timeInMs;
+            //return format.timeInMs + (AddOffset ? OffsetForMapStartMs : 0);
         }
 
         private HitCircle CreateHitCircle(int index, string[] hitObject)
@@ -235,7 +241,7 @@ namespace Assets.Scripts.TapTapAim
             instance.GetComponent<RectTransform>().anchoredPosition = new Vector3(format.x, format.y, 0);
             instance.transform.localScale = new Vector2(1f, 1f);
 
-            instance.PerfectInteractionTime = GetPerfectTime(format);
+            instance.PerfectInteractionTimeInMs = GetPerfectTime(format);
             return instance;
         }
 
@@ -254,7 +260,7 @@ namespace Assets.Scripts.TapTapAim
             instance.transform.GetComponent<RectTransform>().anchoredPosition = new Vector3(circleFormat.x, circleFormat.y, 0);
             instance.transform.localScale = new Vector2(1f, 1f);
 
-            instance.PerfectInteractionTime = GetPerfectTime(circleFormat);
+            instance.PerfectInteractionTimeInMs = GetPerfectTime(circleFormat);
             return instance;
         }
 
@@ -262,7 +268,7 @@ namespace Assets.Scripts.TapTapAim
         {
             public float x;
             public float y;
-            public int time;
+            public double timeInMs;
             public int group { get; set; }
         }
 
@@ -279,7 +285,7 @@ namespace Assets.Scripts.TapTapAim
 
                 x = float.Parse(split[0]);
                 y = float.Parse(split[1]);
-                time = int.Parse(split[2]);
+                timeInMs = int.Parse(split[2]);
                 if (split.Length > 3)
                     group = int.Parse(split[3]);
             }
@@ -298,7 +304,7 @@ namespace Assets.Scripts.TapTapAim
             {
                 x = float.Parse(split[0]);
                 y = float.Parse(split[1]);
-                time = int.Parse(split[2]);
+                timeInMs = int.Parse(split[2]);
                 group = int.Parse(split[3]);
                 var typeAndAnchorSplit = split[5].Split('|');
 

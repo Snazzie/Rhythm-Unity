@@ -12,7 +12,7 @@ namespace Assets.Scripts.TapTapAim
     {
 
         public int QueueID { get; set; }
-        public TimeSpan PerfectHitTime { get; set; }
+        public double PerfectHitTimeInMs { get; set; }
         public int VisibleStartOffsetMs { get; } = 400;
         public int VisibleEndOffsetMs { get; } = 50;
         public TapTapAimSetup TapTapAimSetup { get; set; }
@@ -22,8 +22,8 @@ namespace Assets.Scripts.TapTapAim
         public Slider Slider { get; set; }
         public int Bounces { get; set; }
         public int Number { get; set; }
-        public float DurationMs { get; set; }
-        public TimeSpan End { get; set; }
+        public double DurationMs { get; set; }
+        public double EndOfLifeTimeInMs { get; set; }
         public float Progress { get; set; }
         public bool GoingForward { get; set; }
         private bool Ready { get; set; }
@@ -35,18 +35,18 @@ namespace Assets.Scripts.TapTapAim
         [SerializeField]
         [Range(0.0f, 100.0f)]
         private float TParam;
-        public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, TimeSpan perfectHitTime, int bounces, ITapTapAimSetup tapTapAimSetup)
+        public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, double perfectHitTimeInMs, int bounces, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
             ((SliderHitCircle)InitialHitCircle).ParentSlider = this;
             Slider = (Slider)slider;
             SliderPositionRing = (SliderPositionRing)sliderPositionRing;
-            PerfectHitTime = perfectHitTime;
+            PerfectHitTimeInMs = perfectHitTimeInMs;
             Bounces = bounces;
             TapTapAimSetup = TapTapAimSetup;
             GoingForward = true;
             Ready = true;
-            End = perfectHitTime + TimeSpan.FromMilliseconds(DurationMs);
+            EndOfLifeTimeInMs = perfectHitTimeInMs + DurationMs;
             TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             SetAlpha(alpha);
             Visibility = new Visibility()
@@ -56,17 +56,17 @@ namespace Assets.Scripts.TapTapAim
             };
             directionOfTravelBetweenRange = new List<(double, double)>();
             var incrementLengthMs = DurationMs / bounces;
-            var rangeStart = perfectHitTime.TotalMilliseconds;
+            var rangeStart = perfectHitTimeInMs;
             for (int i = 0; i < bounces; i++)
             {
                 directionOfTravelBetweenRange.Add((rangeStart, rangeStart += incrementLengthMs));
             }
 
-            Visibility.VisibleStartStart = PerfectHitTime - TimeSpan.FromMilliseconds(VisibleStartOffsetMs);
-            Visibility.VisibleEndStart = PerfectHitTime + TimeSpan.FromMilliseconds(DurationMs) - TimeSpan.FromMilliseconds(VisibleEndOffsetMs);
-            sliderPositionRing.PerfectInteractionTime = PerfectHitTime;
-            sliderPositionRing.InteractionBoundStart = perfectHitTime;
-            sliderPositionRing.InteractionBoundEnd = perfectHitTime + TimeSpan.FromMilliseconds(DurationMs);
+            Visibility.VisibleStartStartTimeInMs = PerfectHitTimeInMs - VisibleStartOffsetMs;
+            Visibility.VisibleEndStartTimeInMs = PerfectHitTimeInMs + DurationMs - VisibleEndOffsetMs;
+            sliderPositionRing.PerfectInteractionTimeInMs = PerfectHitTimeInMs;
+            sliderPositionRing.InteractionBoundStartTimeInMs = perfectHitTimeInMs;
+            sliderPositionRing.InteractionBoundEndTimeInMs = perfectHitTimeInMs + DurationMs;
 
 
             gameObject.SetActive(false);
@@ -75,28 +75,28 @@ namespace Assets.Scripts.TapTapAim
         void Update()
         {
 
-            if (!fadeInTriggered && TapTapAimSetup.Tracker.Stopwatch.Elapsed >= Visibility.VisibleStartStart)
+            if (!fadeInTriggered && TapTapAimSetup.Tracker.GetTime() >= Visibility.VisibleStartStartTimeInMs)
             {
                 ((MonoBehaviour)InitialHitCircle).enabled = true;
                 ((MonoBehaviour)InitialHitCircle).gameObject.SetActive(true);
                 StartCoroutine(FadeIn());
 
             }
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime + TimeSpan.FromMilliseconds(DurationMs))
+            if (TapTapAimSetup.Tracker.GetTime() >= PerfectHitTimeInMs + DurationMs)
             {
                 StartCoroutine(FadeOut());
                 Destroy(gameObject, 1);
             }
 
-            if (TapTapAimSetup.Tracker.Stopwatch.Elapsed >= PerfectHitTime && !positionRingDone)
+            if (TapTapAimSetup.Tracker.GetTime() >= PerfectHitTimeInMs && !positionRingDone)
             {
                 try
                 {
                     int indexOf = 0;
                     for (int i = 0; i < directionOfTravelBetweenRange.Count; i++)
                     {
-                        if (TapTapAimSetup.Tracker.Stopwatch.Elapsed.TotalMilliseconds >= directionOfTravelBetweenRange[i].Item1 &&
-                            TapTapAimSetup.Tracker.Stopwatch.Elapsed.TotalMilliseconds < directionOfTravelBetweenRange[i].Item2)
+                        if (TapTapAimSetup.Tracker.GetTime() >= directionOfTravelBetweenRange[i].Item1 &&
+                            TapTapAimSetup.Tracker.GetTime() < directionOfTravelBetweenRange[i].Item2)
                         {
                             indexOf = i;
                             break;
@@ -106,7 +106,7 @@ namespace Assets.Scripts.TapTapAim
                     GoingForward = indexOf % 2 == 0;
 
                     // currently doesnt consider bounces
-                    TParam = ((float)(TapTapAimSetup.Tracker.Stopwatch.Elapsed - PerfectHitTime).TotalMilliseconds / (DurationMs / Bounces + 1));// +1 so 1 bounce means, if bounces is 1, duration is halved.
+                    TParam = (float)(TapTapAimSetup.Tracker.GetTime() - PerfectHitTimeInMs / (DurationMs / Bounces + 1));// +1 so 1 bounce means, if bounces is 1, duration is halved.
 
                     if (TParam > 1)
                     {
@@ -128,9 +128,6 @@ namespace Assets.Scripts.TapTapAim
 
 
         }
-
-
-
         IEnumerator FadeIn()
         {
             fadeInTriggered = true;

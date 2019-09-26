@@ -22,9 +22,10 @@ namespace Assets.Scripts.TapTapAim
         float Health { get; }
         bool IsGameReady { get; }
         bool GameFinished { get; }
-        Stopwatch Stopwatch { get; }
-        int StartOffset { get; set; }
+        double StartOffsetMs { get; set; }
         int NextObjToHit { get; }
+        double GetTime();
+        bool UseMusicTimeline { get; set; }
         void RecordEvent(bool hit, HitScore hitScore = null);
         void SetGameReady();
 
@@ -47,12 +48,12 @@ namespace Assets.Scripts.TapTapAim
     {
         int InteractionID { get; set; }
         void TryInteract();
-        TimeSpan PerfectInteractionTime { get; set; }
+        double PerfectInteractionTimeInMs { get; set; }
         int AccuracyLaybackMs { get; set; }
 
-        TimeSpan InteractionBoundStart { get; set; }
-        TimeSpan InteractionBoundEnd { get; set; }
-        bool IsInInteractionBound(TimeSpan time);
+        double InteractionBoundStartTimeInMs { get; set; }
+        double InteractionBoundEndTimeInMs { get; set; }
+        bool IsInInteractionBound(double time);
         event EventHandler OnInteract;
     }
 
@@ -88,7 +89,7 @@ namespace Assets.Scripts.TapTapAim
         ISliderHitCircle InitialHitCircle { get; }
         Slider Slider { get; }
         int Bounces { get; set; }
-        float DurationMs { get; set; }
+        double DurationMs { get; set; }
         bool GoingForward { get; set; }
     }
     public enum SliderType

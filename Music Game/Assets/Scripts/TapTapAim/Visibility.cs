@@ -4,10 +4,10 @@ namespace Assets.TapTapAim
 {
     public class Visibility
     {
-        public int VisibleStartOffsetMs { get; set; }
-        public int VisibleEndOffsetMs { get; set; }
-        public TimeSpan VisibleStartStart { get; set; }
-        public TimeSpan VisibleEndStart { get; set; }
+        public Double VisibleStartOffsetMs { get; set; }
+        public Double VisibleEndOffsetMs { get; set; }
+        public Double VisibleStartStartTimeInMs { get; set; }
+        public Double VisibleEndStartTimeInMs { get; set; }
         public bool fadeInTriggered { get; set; }
         public bool fadeOutTriggered { get; set; }
     }

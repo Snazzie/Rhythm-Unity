@@ -37,7 +37,7 @@ public class TapTapAimUI : MonoBehaviour {
     {
         if (num >= 100000000)
         {
-            return (num / 1000000D).ToString("0.000B");
+            return (num / 100000000D).ToString("0.000B");
         }
         if (num >= 1000000)
         {

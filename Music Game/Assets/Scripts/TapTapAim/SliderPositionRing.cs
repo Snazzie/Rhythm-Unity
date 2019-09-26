@@ -10,12 +10,12 @@ namespace Assets.Scripts.TapTapAim
         public Visibility Visibility { get; set; }
         public TapTapAimSetup TapTapAimSetup { get; set; }
         public int InteractionID { get; set; }
-        public TimeSpan PerfectInteractionTime { get; set; }
+        public double PerfectInteractionTimeInMs { get; set; }
         public int AccuracyLaybackMs { get; set; }
 
-        public TimeSpan InteractionBoundStart { get; set; }
+        public double InteractionBoundStartTimeInMs { get; set; }
 
-        public TimeSpan InteractionBoundEnd { get; set; }
+        public double InteractionBoundEndTimeInMs { get; set; }
         private bool done { get; set; }
         void Update()
         {
@@ -32,24 +32,24 @@ namespace Assets.Scripts.TapTapAim
         }
         public bool IsPastLifeBound()
         {
-            return TapTapAimSetup.Tracker.Stopwatch.Elapsed >= InteractionBoundEnd;
+            return TapTapAimSetup.Tracker.GetTime() >= InteractionBoundEndTimeInMs;
         }
         public void TryInteract()
         {
             // do nothing for now
         }
 
-        public bool IsInInteractionBound(TimeSpan time)
+        public bool IsInInteractionBound(double timeInMs)
         {
-            if (time >= InteractionBoundStart && time <= InteractionBoundEnd)
+            if (timeInMs >= InteractionBoundStartTimeInMs && timeInMs <= InteractionBoundEndTimeInMs)
             {
                 return true;
             }
             return false;
         }
-        public bool IsInAutoPlayHitBound(TimeSpan time)
+        public bool IsInAutoPlayHitBound(double timeInMs)
         {
-            if (time >= InteractionBoundStart && time <= InteractionBoundEnd)
+            if (timeInMs >= InteractionBoundStartTimeInMs && timeInMs <= InteractionBoundEndTimeInMs)
             {
                 return true;
             }
