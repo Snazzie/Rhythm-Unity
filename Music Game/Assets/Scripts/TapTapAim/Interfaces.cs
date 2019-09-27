@@ -24,7 +24,7 @@ namespace Assets.Scripts.TapTapAim
         bool GameFinished { get; }
         double StartOffsetMs { get; set; }
         int NextObjToHit { get; }
-        double GetTime();
+        double GetTimeInMs();
         bool UseMusicTimeline { get; set; }
         void RecordEvent(bool hit, HitScore hitScore = null);
         void SetGameReady();

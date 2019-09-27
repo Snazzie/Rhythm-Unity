@@ -32,7 +32,7 @@ namespace Assets.Scripts.TapTapAim
         }
         public bool IsPastLifeBound()
         {
-            return TapTapAimSetup.Tracker.GetTime() >= InteractionBoundEndTimeInMs;
+            return TapTapAimSetup.Tracker.GetTimeInMs() >= InteractionBoundEndTimeInMs;
         }
         public void TryInteract()
         {

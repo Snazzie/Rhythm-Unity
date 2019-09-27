@@ -69,12 +69,12 @@ namespace Assets.Scripts.TapTapAim
         {
             if (!IsHitAttempted)
             {
-                if (TapTapAimSetup.Tracker.GetTime() >= Visibility.VisibleStartStartTimeInMs)
+                if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleStartStartTimeInMs)
                 {
                     StartCoroutine(TimingRingShrink());
                 }
 
-                if (IsInInteractionBound(TapTapAimSetup.Tracker.GetTime()))
+                if (IsInInteractionBound(TapTapAimSetup.Tracker.GetTimeInMs()))
                 {
                     transform.GetComponent<Rigidbody2D>().simulated = true;
                     transform.GetComponent<CircleCollider2D>().enabled = true;
@@ -88,7 +88,7 @@ namespace Assets.Scripts.TapTapAim
 
 
                     Debug.LogError($" HitId:{InteractionID} Not hit attempted.  next hit id: {TapTapAimSetup.Tracker.NextObjToHit}");
-                    Outcome(TapTapAimSetup.Tracker.GetTime(), false);
+                    Outcome(TapTapAimSetup.Tracker.GetTimeInMs(), false);
                     Disappear();
                 }
             }
@@ -96,7 +96,7 @@ namespace Assets.Scripts.TapTapAim
 
         public bool IsInCircleLifeBound()
         {
-            var time = TapTapAimSetup.Tracker.GetTime();
+            var time = TapTapAimSetup.Tracker.GetTimeInMs();
             if (time >= Visibility.VisibleStartStartTimeInMs
                 && time <= PerfectInteractionTimeInMs + Visibility.VisibleEndOffsetMs)
             {
@@ -107,7 +107,7 @@ namespace Assets.Scripts.TapTapAim
 
         public bool IsPastLifeBound()
         {
-            return TapTapAimSetup.Tracker.GetTime() >= PerfectInteractionTimeInMs + Visibility.VisibleEndOffsetMs;
+            return TapTapAimSetup.Tracker.GetTimeInMs() >= PerfectInteractionTimeInMs + Visibility.VisibleEndOffsetMs;
         }
 
         public bool IsInInteractionBound(double time)
@@ -130,7 +130,7 @@ namespace Assets.Scripts.TapTapAim
 
         public void TryInteract()
         {
-            double hitTime = TapTapAimSetup.Tracker.GetTime();
+            double hitTime = TapTapAimSetup.Tracker.GetTimeInMs();
             if (!IsHitAttempted)
             {
                 Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectInteractionTimeInMs + "   IsInBounds:" +
@@ -173,7 +173,7 @@ namespace Assets.Scripts.TapTapAim
             if (shrinkDone)
                 yield return null;
 
-            shrinkTParam = Math.Abs((float)((TapTapAimSetup.Tracker.GetTime() - PerfectInteractionTimeInMs) / shrinkDuration));
+            shrinkTParam = Math.Abs((float)((TapTapAimSetup.Tracker.GetTimeInMs() - PerfectInteractionTimeInMs) / shrinkDuration));
 
             if (shrinkTParam >= 1)
             {

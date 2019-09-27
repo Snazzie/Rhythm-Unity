@@ -13,8 +13,8 @@ namespace Assets.Scripts.TapTapAim
 
         public int QueueID { get; set; }
         public double PerfectHitTimeInMs { get; set; }
-        public int VisibleStartOffsetMs { get; } = 400;
-        public int VisibleEndOffsetMs { get; } = 50;
+        public double VisibleStartOffsetMs { get; } = 400;
+        public double VisibleEndOffsetMs { get; } = 50;
         public TapTapAimSetup TapTapAimSetup { get; set; }
         public ICircle BlankCircle { get; set; }
         public ISliderHitCircle InitialHitCircle { get; set; }
@@ -75,28 +75,28 @@ namespace Assets.Scripts.TapTapAim
         void Update()
         {
 
-            if (!fadeInTriggered && TapTapAimSetup.Tracker.GetTime() >= Visibility.VisibleStartStartTimeInMs)
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleStartStartTimeInMs)
             {
                 ((MonoBehaviour)InitialHitCircle).enabled = true;
                 ((MonoBehaviour)InitialHitCircle).gameObject.SetActive(true);
                 StartCoroutine(FadeIn());
 
             }
-            if (TapTapAimSetup.Tracker.GetTime() >= PerfectHitTimeInMs + DurationMs)
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= PerfectHitTimeInMs + DurationMs)
             {
                 StartCoroutine(FadeOut());
                 Destroy(gameObject, 1);
             }
 
-            if (TapTapAimSetup.Tracker.GetTime() >= PerfectHitTimeInMs && !positionRingDone)
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= PerfectHitTimeInMs && !positionRingDone)
             {
                 try
                 {
                     int indexOf = 0;
                     for (int i = 0; i < directionOfTravelBetweenRange.Count; i++)
                     {
-                        if (TapTapAimSetup.Tracker.GetTime() >= directionOfTravelBetweenRange[i].Item1 &&
-                            TapTapAimSetup.Tracker.GetTime() < directionOfTravelBetweenRange[i].Item2)
+                        if (TapTapAimSetup.Tracker.GetTimeInMs() >= directionOfTravelBetweenRange[i].Item1 &&
+                            TapTapAimSetup.Tracker.GetTimeInMs() < directionOfTravelBetweenRange[i].Item2)
                         {
                             indexOf = i;
                             break;
@@ -106,7 +106,7 @@ namespace Assets.Scripts.TapTapAim
                     GoingForward = indexOf % 2 == 0;
 
                     // currently doesnt consider bounces
-                    TParam = (float)(TapTapAimSetup.Tracker.GetTime() - PerfectHitTimeInMs / (DurationMs / Bounces + 1));// +1 so 1 bounce means, if bounces is 1, duration is halved.
+                    TParam = (float)(TapTapAimSetup.Tracker.GetTimeInMs() - PerfectHitTimeInMs / (DurationMs / Bounces + 1));// +1 so 1 bounce means, if bounces is 1, duration is halved.
 
                     if (TParam > 1)
                     {
@@ -128,17 +128,26 @@ namespace Assets.Scripts.TapTapAim
 
 
         }
+        bool fadeInDone;
         IEnumerator FadeIn()
         {
-            fadeInTriggered = true;
-            float elapsedTime = 0.0f;
+            if (fadeInDone)
+                yield return null;
 
-            while (elapsedTime < 1 != fadeOutTriggered)
+            var fadeDuration = Visibility.VisibleStartOffsetMs * 0.7f;
+
+            var fadeInTParam = (float)((Visibility.VisibleStartStartTimeInMs + fadeDuration - TapTapAimSetup.Tracker.GetTimeInMs()) / fadeDuration);
+            if (fadeInTParam >= 1)
             {
-                yield return instruction;
-                elapsedTime += Time.deltaTime;
-                SetAlpha(Mathf.Clamp01(elapsedTime * 4));
+                fadeInTParam = 1;
+                fadeInDone = true;
             }
+            else if (fadeInTParam < 0)
+                fadeInTParam = 0;
+
+            var alpha = 1 + fadeInTParam * (0 - 1);
+
+            SetAlpha(alpha);
         }
         private void Outcome(TimeSpan time, bool hit)
         {

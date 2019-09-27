@@ -25,7 +25,6 @@ namespace Assets.Scripts.TapTapAim
         private YieldInstruction instruction = new YieldInstruction();
 
         private double shrinkDuration;
-        private float shrinkTParam = 0;
 
         public event EventHandler OnInteract;
         // Use this for initialization
@@ -55,23 +54,23 @@ namespace Assets.Scripts.TapTapAim
         {
             if (!IsHitAttempted)
             {
-                if (TapTapAimSetup.Tracker.GetTime() >= Visibility.VisibleStartStartTimeInMs)
+                if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleStartStartTimeInMs)
                 {
                     StartCoroutine(FadeIn());
                     StartCoroutine(TimingRingShrink());
                 }
 
-                if (IsInInteractionBound(TapTapAimSetup.Tracker.GetTime()))
+                if (IsInInteractionBound(TapTapAimSetup.Tracker.GetTimeInMs()))
                 {
 
                     transform.GetComponent<Rigidbody2D>().simulated = true;
                     transform.GetComponent<CircleCollider2D>().enabled = true;
                 }
 
-                if (TapTapAimSetup.Tracker.GetTime() >= Visibility.VisibleEndStartTimeInMs && !Visibility.fadeOutTriggered)
+                if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleEndStartTimeInMs && !Visibility.fadeOutTriggered)
                 {
                     transform.GetComponent<Rigidbody2D>().simulated = false;
-                    Outcome(TapTapAimSetup.Tracker.GetTime(), false);
+                    Outcome(TapTapAimSetup.Tracker.GetTimeInMs(), false);
                     StartCoroutine(FadeOut());
                 }
             }
@@ -113,7 +112,7 @@ namespace Assets.Scripts.TapTapAim
 
         public void TryInteract()
         {
-            double hitTime = TapTapAimSetup.Tracker.GetTime();
+            double hitTime = TapTapAimSetup.Tracker.GetTimeInMs();
             if (!IsHitAttempted)
             {
                 Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectInteractionTimeInMs + "   IsInBounds:" +
@@ -154,7 +153,7 @@ namespace Assets.Scripts.TapTapAim
             if (shrinkDone)
                 yield return null;
 
-            shrinkTParam = Math.Abs((float)((TapTapAimSetup.Tracker.GetTime() - PerfectInteractionTimeInMs) / shrinkDuration));
+            var shrinkTParam = (float)((PerfectInteractionTimeInMs - TapTapAimSetup.Tracker.GetTimeInMs()) / shrinkDuration);
 
             if (shrinkTParam >= 1)
             {
@@ -164,21 +163,30 @@ namespace Assets.Scripts.TapTapAim
             else if (shrinkTParam < 0)
                 shrinkTParam = 0;
 
-            var scale = shrinkMinScale +  shrinkTParam * (ringStartScale - shrinkMinScale);
+            var scale = shrinkMinScale + shrinkTParam * (ringStartScale - shrinkMinScale);
             SetHitRingScale(scale);
         }
 
+
+        bool fadeInDone;
         IEnumerator FadeIn()
         {
-            Visibility.fadeInTriggered = true;
-            float elapsedTime = 0.0f;
+            if (fadeInDone)
+                yield return null;
+            var fadeDuration = Visibility.VisibleStartOffsetMs * 0.7f;
 
-            while (elapsedTime < 1 != Visibility.fadeOutTriggered)
+            var fadeInTParam = (float)((Visibility.VisibleStartStartTimeInMs + fadeDuration  - TapTapAimSetup.Tracker.GetTimeInMs()) / fadeDuration);
+            if (fadeInTParam >= 1)
             {
-                yield return instruction;
-                elapsedTime += Time.deltaTime;
-                SetAlpha(Mathf.Clamp01(elapsedTime * 4));
+                fadeInTParam = 1;
+                fadeInDone = true;
             }
+            else if (fadeInTParam < 0)
+                fadeInTParam = 0;
+
+            var alpha = 1 + fadeInTParam * (0 - 1);
+
+            SetAlpha(alpha);
         }
         IEnumerator FadeOut()
         {
@@ -251,6 +259,7 @@ namespace Assets.Scripts.TapTapAim
         }
         private void SetAlpha(float alpha)
         {
+            Debug.Log($"{QueueID} HitCircle Alpha:{alpha}");
             var children = GetComponentsInChildren<Image>();
             var textChild = GetComponentsInChildren<Text>();
             foreach (var child in children)

@@ -60,7 +60,7 @@ namespace Assets.Scripts
 
                     //pos.y += 0.1f;
                     if (nextObj.transform.GetComponent<IHoldable>() == null)
-                        SetDestination(nextObj.position, ((nextObj.GetComponent<IInteractable>().PerfectInteractionTimeInMs - tapTapAimSetup.Tracker.GetTime()) / 1000) * Speed);
+                        SetDestination(nextObj.position, ((nextObj.GetComponent<IInteractable>().PerfectInteractionTimeInMs - tapTapAimSetup.Tracker.GetTimeInMs()) / 1000) * Speed);
                     else
                     {
                         SetDestination(nextObj.position, 0);
@@ -110,7 +110,7 @@ namespace Assets.Scripts
                         switch (interactable)
                         {
                             case HitCircle hitCircle:
-                                if (!hitCircle.IsHitAttempted && hitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.GetTime()))
+                                if (!hitCircle.IsHitAttempted && hitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.GetTimeInMs()))
                                 {
                                     Debug.LogWarning("Try hit: " + hitCircle.name);
 
@@ -121,7 +121,7 @@ namespace Assets.Scripts
 
                             case SliderHitCircle sliderHitCircle:
                                 {
-                                    if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.GetTime()))
+                                    if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.GetTimeInMs()))
                                     {
                                         Debug.LogWarning("Try hit: " + sliderHitCircle.name);
 
@@ -133,7 +133,7 @@ namespace Assets.Scripts
                                 }
                             case SliderPositionRing sliderPositionRing:
                                 {
-                                    if (sliderPositionRing.IsInInteractionBound(tapTapAimSetup.Tracker.GetTime()))
+                                    if (sliderPositionRing.IsInInteractionBound(tapTapAimSetup.Tracker.GetTimeInMs()))
                                     {
                                         Debug.LogWarning("Try interact: " + sliderPositionRing.name);
                                         sliderPositionRing.TryInteract();

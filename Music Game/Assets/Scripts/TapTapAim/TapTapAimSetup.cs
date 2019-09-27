@@ -10,6 +10,13 @@ namespace Assets.Scripts.TapTapAim
 {
     public class TapTapAimSetup : MonoBehaviour, ITapTapAimSetup
     {
+        public float PlaybackSpeed { get; internal set; } = 1f;
+        public static double visibleStartOffsetMs = 400;
+        private bool showSliders { get; } = true;
+        private bool showLinerSlider { get; } = true;
+        private bool showQuadraticSlider { get; } = true;
+        private bool showCircles { get; } = true;
+        public bool isAutoPlay { get; } = true;
 
         public Transform HitCircleTransform;
         public Transform CircleTransform;
@@ -18,12 +25,7 @@ namespace Assets.Scripts.TapTapAim
         public Transform SliderPositionRing;
         public Transform SliderHitCircleTransform;
 
-        public static int visibleStartOffsetMs = 400;
-        private bool showSliders { get; } = true;
-        private bool showLinerSlider { get; } = true;
-        private bool showQuadraticSlider { get; } = true;
-        private bool showCircles { get; } = true;
-        public bool isAutoPlay { get; } = true;
+
 
         public bool interactWithSliderPositionRing { get; } = true;
 
@@ -40,7 +42,7 @@ namespace Assets.Scripts.TapTapAim
         /// <summary>
         /// offset for start of map to give player some time to get ready
         /// </summary>
-        public int OffsetForMapStartMs { get; private set; } = 2000;
+        public double OffsetForMapStartMs { get; private set; } = 2000;
         public bool AddOffset { get; set; }
 
         public AudioSource MusicSource { get; set; }
@@ -50,7 +52,7 @@ namespace Assets.Scripts.TapTapAim
         private int GroupIDCount { get; set; } = 0;
 
         private int InteractionID { get; set; } = -1;
-        public float PlaybackSpeed { get; internal set; } = 1f;
+
 
         void Start()
         {
@@ -62,8 +64,8 @@ namespace Assets.Scripts.TapTapAim
             Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             Tracker.TapTapAimSetup = this;
 
-            if (TimeSpan.FromMilliseconds(int.Parse(GameStartParameters.MapJson.map[0].Split(',')[2])) <
-                TimeSpan.FromMilliseconds(OffsetForMapStartMs + visibleStartOffsetMs))
+            if (double.Parse(GameStartParameters.MapJson.map[0].Split(',')[2]) <
+                OffsetForMapStartMs + visibleStartOffsetMs)
             {
                 AddOffset = true;
                 Tracker.StartOffsetMs = OffsetForMapStartMs;
@@ -329,10 +331,7 @@ namespace Assets.Scripts.TapTapAim
                             type = SliderType.QuadraticBezierCurve;
                             var list = new List<Vector3>(vectors);
                             list.Insert(0, new Vector3(x, y, 0));
-                            foreach (var v in list)
-                            {
-                                Debug.Log(v.ToString());
-                            }
+
                             points = PerfectCurve.GetPoints(list);
                             break;
                         }
