@@ -50,12 +50,15 @@ namespace Assets.Scripts.TapTapAim
         private int GroupIDCount { get; set; } = 0;
 
         private int InteractionID { get; set; } = -1;
+        public float PlaybackSpeed { get; internal set; } = 1f;
+
         void Start()
         {
             PlayArea = GameObject.Find("PlayArea").transform;
             HitSource = GameObject.Find("HitSource").GetComponent<AudioSource>();
             MusicSource = GameObject.Find("MusicSource").GetComponent<AudioSource>();
             MusicSource.clip = GameStartParameters.MapJson.audioClip;
+            MusicSource.pitch = PlaybackSpeed;
             Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             Tracker.TapTapAimSetup = this;
 
