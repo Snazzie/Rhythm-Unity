@@ -117,7 +117,7 @@ namespace Assets.Scripts.TapTapAim
             //    ((MonoBehaviour)TapTapAimSetup.ObjectInteractQueue[nextObjectID]).gameObject.SetActive(true);
             //    nextObjectID++;
             //}
-            if (Stopwatch.Elapsed.TotalMilliseconds + 200 >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStartTimeInMs)
+            if (GetTime() + (200 * TapTapAimSetup.PlaybackSpeed) >= TapTapAimSetup.ObjActivationQueue[NextObjToActivateID].Visibility.VisibleStartStartTimeInMs)
             {
                 ((MonoBehaviour)(TapTapAimSetup).ObjActivationQueue[NextObjToActivateID]).gameObject.SetActive(true);
                 NextObjToActivateID++;
