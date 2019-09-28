@@ -133,8 +133,7 @@ namespace Assets.Scripts.TapTapAim
             double hitTime = TapTapAimSetup.Tracker.GetTimeInMs();
             if (!IsHitAttempted)
             {
-                Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectInteractionTimeInMs + "   IsInBounds:" +
-                          IsInInteractionBound(hitTime));
+                //Debug.Log(QueueID + "tryHit Triggered. : " + hitTime + "Perfect time =>" + PerfectInteractionTimeInMs + "   IsInBounds:" + IsInInteractionBound(hitTime));
                 if (InteractionID == TapTapAimSetup.Tracker.NextObjToHit)
                 {
 

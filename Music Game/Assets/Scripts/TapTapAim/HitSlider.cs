@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.TapTapAim;
@@ -20,9 +20,9 @@ namespace Assets.Scripts.TapTapAim
         public ISliderHitCircle InitialHitCircle { get; set; }
         public SliderPositionRing SliderPositionRing { get; set; }
         public Slider Slider { get; set; }
-        public int Bounces { get; set; }
+        public int SliderTrips { get; set; }
         public int Number { get; set; }
-        public double DurationMs { get; set; }
+        public double TripMs { get; set; }
         public double EndOfLifeTimeInMs { get; set; }
         public float Progress { get; set; }
         public bool GoingForward { get; set; }
@@ -31,22 +31,22 @@ namespace Assets.Scripts.TapTapAim
         private float alpha = 0;
         public int AccuracyLaybackMs { get; set; } = 100;
         private bool positionRingDone;
-        private List<(double, double)> directionOfTravelBetweenRange { get; set; }
+        private List<double> tripTimesInMs { get; set; }
         [SerializeField]
         [Range(0.0f, 100.0f)]
         private float TParam;
-        public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, double perfectHitTimeInMs, int bounces, ITapTapAimSetup tapTapAimSetup)
+        public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, double perfectHitTimeInMs, int sliderTrips, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
             ((SliderHitCircle)InitialHitCircle).ParentSlider = this;
             Slider = (Slider)slider;
             SliderPositionRing = (SliderPositionRing)sliderPositionRing;
             PerfectHitTimeInMs = perfectHitTimeInMs;
-            Bounces = bounces;
+            SliderTrips = sliderTrips;
             TapTapAimSetup = TapTapAimSetup;
             GoingForward = true;
             Ready = true;
-            EndOfLifeTimeInMs = perfectHitTimeInMs + DurationMs;
+            EndOfLifeTimeInMs = perfectHitTimeInMs + (TripMs * SliderTrips);
             TapTapAimSetup.Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             SetAlpha(alpha);
             Visibility = new Visibility()
@@ -54,19 +54,21 @@ namespace Assets.Scripts.TapTapAim
                 VisibleStartOffsetMs = 400,
                 VisibleEndOffsetMs = 100
             };
-            directionOfTravelBetweenRange = new List<(double, double)>();
-            var incrementLengthMs = DurationMs / bounces;
-            var rangeStart = perfectHitTimeInMs;
-            for (int i = 0; i < bounces; i++)
+            tripTimesInMs = new List<double>();
+            var totalSliderLifeTimeMs = TripMs * SliderTrips;
+
+            for (int i = 0; i < SliderTrips; i++)
             {
-                directionOfTravelBetweenRange.Add((rangeStart, rangeStart += incrementLengthMs));
+                tripTimesInMs.Add(perfectHitTimeInMs + ((i + 1) * TripMs ));
             }
 
+            
+
             Visibility.VisibleStartStartTimeInMs = PerfectHitTimeInMs - VisibleStartOffsetMs;
-            Visibility.VisibleEndStartTimeInMs = PerfectHitTimeInMs + DurationMs - VisibleEndOffsetMs;
+            Visibility.VisibleEndStartTimeInMs = PerfectHitTimeInMs + totalSliderLifeTimeMs - VisibleEndOffsetMs;
             sliderPositionRing.PerfectInteractionTimeInMs = PerfectHitTimeInMs;
             sliderPositionRing.InteractionBoundStartTimeInMs = perfectHitTimeInMs;
-            sliderPositionRing.InteractionBoundEndTimeInMs = perfectHitTimeInMs + DurationMs;
+            sliderPositionRing.InteractionBoundEndTimeInMs = perfectHitTimeInMs + totalSliderLifeTimeMs;
 
 
             gameObject.SetActive(false);
@@ -82,52 +84,58 @@ namespace Assets.Scripts.TapTapAim
                 StartCoroutine(FadeIn());
 
             }
-            if (TapTapAimSetup.Tracker.GetTimeInMs() >= PerfectHitTimeInMs + DurationMs)
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleEndStartTimeInMs && !fadeOutTriggered)
             {
                 StartCoroutine(FadeOut());
                 Destroy(gameObject, 1);
             }
 
-            if (TapTapAimSetup.Tracker.GetTimeInMs() >= PerfectHitTimeInMs && !positionRingDone)
+        }
+        void FixedUpdate()
+        {
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= SliderPositionRing.InteractionBoundStartTimeInMs)
             {
-                try
+                StartCoroutine(MoveSliderPositionRing());
+            }
+        }
+        IEnumerator MoveSliderPositionRing()
+        {
+
+            
+            var frameTime = TapTapAimSetup.Tracker.GetTimeInMs();
+            try
+            {
+                int indexOf = 0;
+                for (int i = 0; i < tripTimesInMs.Count; i++)
                 {
-                    int indexOf = 0;
-                    for (int i = 0; i < directionOfTravelBetweenRange.Count; i++)
+                    if (frameTime < tripTimesInMs[i])
                     {
-                        if (TapTapAimSetup.Tracker.GetTimeInMs() >= directionOfTravelBetweenRange[i].Item1 &&
-                            TapTapAimSetup.Tracker.GetTimeInMs() < directionOfTravelBetweenRange[i].Item2)
-                        {
-                            indexOf = i;
-                            break;
-                        }
+                        indexOf = i;
+                        break;
                     }
-
-                    GoingForward = indexOf % 2 == 0;
-
-                    // currently doesnt consider bounces
-                    TParam = (float)(TapTapAimSetup.Tracker.GetTimeInMs() - PerfectHitTimeInMs / (DurationMs / Bounces + 1));// +1 so 1 bounce means, if bounces is 1, duration is halved.
-
-                    if (TParam > 1)
-                    {
-                        SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(1);
-                    }
-                    else
-                    {
-                        if (GoingForward)
-                            SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(TParam);
-                    }
-                    // handle Tparam direction using 100 -tparam
                 }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
+
+                Debug.Log($"id: {QueueID}:  {indexOf + 1}/ {tripTimesInMs.Count}");
+                GoingForward = indexOf % 2 != 0;
+                var thisTripDestinationTimeInMs = tripTimesInMs[indexOf];
+
+
+                TParam = GoingForward
+                    ? (float)((thisTripDestinationTimeInMs - frameTime) / TripMs)
+                    : 1 - (float)((thisTripDestinationTimeInMs - frameTime) / TripMs );
+
+                Debug.Log($"id:{QueueID} TParam: {TParam}");
+                SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(Mathf.Clamp(TParam, 0f, 1f));
+
 
             }
-
-
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+            yield return null;
         }
+
         bool fadeInDone;
         IEnumerator FadeIn()
         {

@@ -158,7 +158,7 @@ namespace Assets.Scripts.TapTapAim
             if (thisId != null)
             {
                 NextObjToHit = (int)thisId + 1;
-                Debug.Log($"set nextHitObj to:{NextObjToHit}");
+                //Debug.Log($"set nextHitObj to:{NextObjToHit}");
                 return;
             }
             //if (Stopwatch.Elapsed >= (TapTapAimSetup.ObjectInteractQueue[NextObjToHit]).PerfectInteractionTime + TimeSpan.FromMilliseconds(TapTapAimSetup.AccuracyLaybackMs))

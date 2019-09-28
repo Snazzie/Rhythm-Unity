@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.TapTapAim;
@@ -152,7 +152,7 @@ namespace Assets.Scripts.TapTapAim
 
 
             var instance = Instantiate(HitSliderTransform, PlayArea).GetComponent<HitSlider>();
-            instance.DurationMs = (float)format.length;
+            instance.TripMs = (float)format.tripMs;
 
 
             instance.TapTapAimSetup = this;
@@ -198,7 +198,7 @@ namespace Assets.Scripts.TapTapAim
                 sliderInstance,
                 sliderPositionRingInstance,
                 GetPerfectTime(format),
-                format.reverseTimes, this);
+                format.sliderTrips, this);
 
             return instance;
 
@@ -300,8 +300,8 @@ namespace Assets.Scripts.TapTapAim
 
             private List<Vector3> vectors = new List<Vector3>();
 
-            public int reverseTimes = 0;
-            public double length;
+            public int sliderTrips = 0;
+            public double tripMs;
             public SliderType type;
             public SliderFormat() { }
             public List<Vector3> points = new List<Vector3>();
@@ -344,8 +344,8 @@ namespace Assets.Scripts.TapTapAim
                             break;
                         }
                 }
-                reverseTimes = int.Parse(split[6]);
-                length = double.Parse(split[7]);
+                sliderTrips = int.Parse(split[6]);
+                tripMs = double.Parse(split[7]);
             }
 
             private void SetPoints()

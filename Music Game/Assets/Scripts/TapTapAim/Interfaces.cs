@@ -88,8 +88,8 @@ namespace Assets.Scripts.TapTapAim
 
         ISliderHitCircle InitialHitCircle { get; }
         Slider Slider { get; }
-        int Bounces { get; set; }
-        double DurationMs { get; set; }
+        int SliderTrips { get; set; }
+        double TripMs { get; set; }
         bool GoingForward { get; set; }
     }
     public enum SliderType

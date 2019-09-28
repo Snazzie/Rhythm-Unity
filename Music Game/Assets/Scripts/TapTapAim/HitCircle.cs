@@ -259,7 +259,6 @@ namespace Assets.Scripts.TapTapAim
         }
         private void SetAlpha(float alpha)
         {
-            Debug.Log($"{QueueID} HitCircle Alpha:{alpha}");
             var children = GetComponentsInChildren<Image>();
             var textChild = GetComponentsInChildren<Text>();
             foreach (var child in children)
