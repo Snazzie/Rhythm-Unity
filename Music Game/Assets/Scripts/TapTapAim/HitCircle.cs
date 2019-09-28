@@ -206,27 +206,27 @@ namespace Assets.Scripts.TapTapAim
         {
             if (hit)
             {
-                var difference = Math.Abs(timeInMs - PerfectInteractionTimeInMs);
-                int score;
-                if (difference <= 100)
-                {
-                    score = 100;
-                }
-                else if (difference <= 150)
-                {
-                    score = 50;
-                }
-                else
-                {
-                    score = 20;
-                }
-
                 var cs = new HitScore()
                 {
                     id = QueueID,
-                    accuracy = GetAccuracy(difference),
-                    score = score
+                    accuracy = GetAccuracy(timeInMs)
                 };
+
+               
+                if (cs.accuracy <= 0.2f)
+                {
+                    cs.score = 100;
+                }
+                else if (cs.accuracy <= 0.6f)
+                {
+                    cs.score = 50;
+                }
+                else
+                {
+                    cs.score = 25;
+                }
+
+                
                 TapTapAimSetup.Tracker.RecordEvent(true, cs);
             }
             else
@@ -241,15 +241,13 @@ namespace Assets.Scripts.TapTapAim
                 Debug.LogError(InteractionID + "Failed to hit");
             }
             // gameObject.SetActive(false);
-            Destroy(gameObject, 2);
+            Destroy(gameObject, 1);
         }
         //TODO: scale with HasAttemptHit window
-        private float GetAccuracy(double difference)
+        private float GetAccuracy(double hitTime)
         {
-            if (difference <= 200)
-                return 100;
+            return Mathf.Abs((float)((PerfectInteractionTimeInMs - hitTime) / 150));
 
-            return 100 - ((float)difference) / 10;
         }
 
         private void SetHitRingScale(float scale)

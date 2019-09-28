@@ -9,7 +9,6 @@ namespace Assets.Scripts.TapTapAim
     {
         public LineRenderer LineRenderer { get; set; }
         public ISliderPositionRing SliderPositionRing { get; set; }
-        public float SliderSpeed { get; set; } = 1f;
         public List<Vector3> Points { get; set; }
         public void DrawSlider()
         {

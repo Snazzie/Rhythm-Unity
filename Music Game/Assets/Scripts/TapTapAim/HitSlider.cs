@@ -93,15 +93,17 @@ namespace Assets.Scripts.TapTapAim
         }
         void FixedUpdate()
         {
-            if (TapTapAimSetup.Tracker.GetTimeInMs() >= SliderPositionRing.InteractionBoundStartTimeInMs)
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= SliderPositionRing.InteractionBoundStartTimeInMs && !StopCalculatingSliderPositionRing)
             {
                 StartCoroutine(MoveSliderPositionRing());
             }
         }
+
+        bool previousDirectionIsForward;
+
         IEnumerator MoveSliderPositionRing()
         {
-
-            
+                       
             var frameTime = TapTapAimSetup.Tracker.GetTimeInMs();
             try
             {
@@ -117,17 +119,29 @@ namespace Assets.Scripts.TapTapAim
 
                 Debug.Log($"id: {QueueID}:  {indexOf + 1}/ {tripTimesInMs.Count}");
                 GoingForward = indexOf % 2 != 0;
+
+
                 var thisTripDestinationTimeInMs = tripTimesInMs[indexOf];
 
 
                 TParam = GoingForward
                     ? (float)((thisTripDestinationTimeInMs - frameTime) / TripMs)
-                    : 1 - (float)((thisTripDestinationTimeInMs - frameTime) / TripMs );
+                    : 1 - (float)((thisTripDestinationTimeInMs - frameTime) / TripMs);
+
 
                 Debug.Log($"id:{QueueID} TParam: {TParam}");
                 SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(Mathf.Clamp(TParam, 0f, 1f));
 
+                if (GoingForward != previousDirectionIsForward)
+                    TapTapAimSetup.HitSource.Play();
+                previousDirectionIsForward = GoingForward;
 
+
+                if (frameTime > EndOfLifeTimeInMs)
+                {
+                    TapTapAimSetup.HitSource.Play();
+                    StopCalculatingSliderPositionRing = true;
+                }
             }
             catch (Exception e)
             {
@@ -209,6 +223,7 @@ namespace Assets.Scripts.TapTapAim
 
         public bool fadeOutTriggered { get; set; }
         public Visibility Visibility { get; set; }
+        public bool StopCalculatingSliderPositionRing { get; private set; }
 
         IEnumerator FadeOut()
         {
