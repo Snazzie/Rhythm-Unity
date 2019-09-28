@@ -185,6 +185,7 @@ namespace Assets.Scripts.TapTapAim
             var sliderHitcircleInstance = CreateSliderHitCircle(circleFormat);
             sliderHitcircleInstance.transform.SetParent(instance.transform);
             sliderHitcircleInstance.name = "SliderHitCircle";
+            sliderHitcircleInstance.transform.localPosition = format.points.First();
 
             var sliderPositionRingInstance = Instantiate(SliderPositionRing, instance.transform).GetComponent<SliderPositionRing>();
             sliderPositionRingInstance.GetComponent<RectTransform>().position = sliderHitcircleInstance.GetComponent<RectTransform>().position;
