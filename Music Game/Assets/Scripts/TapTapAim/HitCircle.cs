@@ -56,8 +56,8 @@ namespace Assets.Scripts.TapTapAim
             {
                 if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleStartStartTimeInMs)
                 {
-                    StartCoroutine(FadeIn());
-                    StartCoroutine(TimingRingShrink());
+                    FadeIn();
+                    TimingRingShrink();
                 }
 
                 if (IsInInteractionBound(TapTapAimSetup.Tracker.GetTimeInMs()))
@@ -147,11 +147,11 @@ namespace Assets.Scripts.TapTapAim
         bool shrinkDone;
         float ringStartScale;
         float shrinkMinScale = 1.05f;
-        IEnumerator TimingRingShrink()
+        void TimingRingShrink()
         {
 
             if (shrinkDone)
-                yield return null;
+                return;
 
             var shrinkTParam = (float)((PerfectInteractionTimeInMs - TapTapAimSetup.Tracker.GetTimeInMs()) / shrinkDuration);
 
@@ -169,10 +169,10 @@ namespace Assets.Scripts.TapTapAim
 
 
         bool fadeInDone;
-        IEnumerator FadeIn()
+        void FadeIn()
         {
             if (fadeInDone)
-                yield return null;
+                return;
             var fadeDuration = Visibility.VisibleStartOffsetMs * 0.7f;
 
             var fadeInTParam = (float)((Visibility.VisibleStartStartTimeInMs + fadeDuration  - TapTapAimSetup.Tracker.GetTimeInMs()) / fadeDuration);
@@ -211,13 +211,13 @@ namespace Assets.Scripts.TapTapAim
                     id = QueueID,
                     accuracy = GetAccuracy(timeInMs)
                 };
-
+                Debug.Log($"Accuracy : {cs.accuracy}");
                
-                if (cs.accuracy <= 0.2f)
+                if (cs.accuracy <= 20f)
                 {
                     cs.score = 100;
                 }
-                else if (cs.accuracy <= 0.6f)
+                else if (cs.accuracy <= 60f)
                 {
                     cs.score = 50;
                 }
@@ -246,7 +246,7 @@ namespace Assets.Scripts.TapTapAim
         //TODO: scale with HasAttemptHit window
         private float GetAccuracy(double hitTime)
         {
-            return Mathf.Abs((float)((PerfectInteractionTimeInMs - hitTime) / 150));
+            return Mathf.Abs((float)(( hitTime - PerfectInteractionTimeInMs) / 150)) * 100;
 
         }
 

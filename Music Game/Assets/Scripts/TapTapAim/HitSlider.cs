@@ -84,7 +84,7 @@ namespace Assets.Scripts.TapTapAim
                 StartCoroutine(FadeIn());
 
             }
-            if (TapTapAimSetup.Tracker.GetTimeInMs() >= Visibility.VisibleEndStartTimeInMs && !fadeOutTriggered)
+            if (TapTapAimSetup.Tracker.GetTimeInMs() >= EndOfLifeTimeInMs && !fadeOutTriggered)
             {
                 StartCoroutine(FadeOut());
                 Destroy(gameObject, 1);
@@ -117,7 +117,7 @@ namespace Assets.Scripts.TapTapAim
                     }
                 }
 
-                Debug.Log($"id: {QueueID}:  {indexOf + 1}/ {tripTimesInMs.Count}");
+                //Debug.Log($"id: {QueueID}:  {indexOf + 1}/ {tripTimesInMs.Count}");
                 GoingForward = indexOf % 2 != 0;
 
 
@@ -129,7 +129,7 @@ namespace Assets.Scripts.TapTapAim
                     : 1 - (float)((thisTripDestinationTimeInMs - frameTime) / TripMs);
 
 
-                Debug.Log($"id:{QueueID} TParam: {TParam}");
+                //Debug.Log($"id:{QueueID} TParam: {TParam}");
                 SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(Mathf.Clamp(TParam, 0f, 1f));
 
                 if (GoingForward != previousDirectionIsForward)
