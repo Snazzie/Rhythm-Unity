@@ -37,6 +37,7 @@ namespace Assets.TapTapAim.LineUtility
 
             return pointList;
         }
+
         void Update()
         {
             pointList = new List<Vector3>();
@@ -55,30 +56,9 @@ namespace Assets.TapTapAim.LineUtility
             LineRenderer.positionCount = pointList.Count;
             LineRenderer.SetPositions(pointList.ToArray());
         }
-        //public void SetPoints(List<Vector2> points, List<BezierControlPointMode> bezierControlPoints)
-        //{
-        //    this.points = points.ToArray();
-        //    modes = bezierControlPoints.ToArray();
-        //}
-
-        void OnDrawGizmos()
-        {
-
-            //Gizmos.DrawLine(point1.position, point2.position);
 
 
-            //Gizmos.DrawLine(point2.position, point3.position);
-
-            //Gizmos.color = Color.red;
-            for (float ratio = 0f / vertexCount; ratio < 1; ratio += 1.0f / vertexCount)
-            {
-                Gizmos.color = Color.cyan;
-                Gizmos.DrawLine(Vector2.Lerp(points[0], points[1], ratio), Vector2.Lerp(points[1], points[2], ratio));
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(Vector2.Lerp(points[3], points[4], ratio), Vector2.Lerp(points[4], points[5], ratio));
-            }
-
-        }
+       
 
     }
 }

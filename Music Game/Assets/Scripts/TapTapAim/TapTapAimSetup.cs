@@ -10,7 +10,7 @@ namespace Assets.Scripts.TapTapAim
 {
     public class TapTapAimSetup : MonoBehaviour, ITapTapAimSetup
     {
-        public float PlaybackSpeed { get; internal set; } = 1f;
+        public float PlaybackSpeed { get; internal set; } = 1.2f;
         public static double visibleStartOffsetMs = 400;
         private bool showSliders { get; } = true;
         private bool showLinerSlider { get; } = true;
@@ -329,7 +329,7 @@ namespace Assets.Scripts.TapTapAim
                         break;
                     case "P":
                         {
-                            type = SliderType.QuadraticBezierCurve;
+                            type = SliderType.PerfectCurve;
                             var list = new List<Vector3>(vectors);
                             list.Insert(0, new Vector3(x, y, 0));
 

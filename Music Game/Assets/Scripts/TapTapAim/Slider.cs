@@ -27,12 +27,13 @@ namespace Assets.Scripts.TapTapAim
             {
                 case SliderType.LinearLine:
                     return Points[0] + tParam * (Points[1] - Points[0]);
-                case SliderType.QuadraticBezierCurve:
+                case SliderType.PerfectCurve:
                     {
-                        return PerfectCurve.CalculateQuadraticBezierPoint(tParam, Points[0], Points[1], Points[2]);
+                        return PerfectCurve.CalculatePerfectArcPoint(tParam, Points[0], Points[1], Points[2]);
                     }
                 case SliderType.BezierCurve:
-                    throw new NotImplementedException();
+                    //temporary
+                    return PerfectCurve.CalculateQuadraticBezierPoint(tParam, Points[0], Points[1], Points[2]);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
