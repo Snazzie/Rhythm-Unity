@@ -20,5 +20,6 @@ and more yet to be listed...
 
 If you're interested in taking part of this project, feel free to email me :)
 
+Excuse the non clean code. theres a lot of trial and error in this project and clean code is not number 1 priority atm as it will most likely be rewritten :/
 
 https://youtu.be/RtPHwJ5Ates
