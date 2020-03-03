@@ -3,12 +3,19 @@ OSU Clone made in Unity
 
 <a style="float: left" href="https://www.codefactor.io/repository/github/acoop133/rhythm-unity"><img src="https://www.codefactor.io/repository/github/acoop133/rhythm-unity/badge" alt="CodeFactor" /></a>
 
-There are tests maps bundled with this project using LFS. make sure you pull from LFS also!
+There are tests maps bundled with this project, click the download maps button on the map selector screen to download them.
 
 
 See other branches for more recent changes.
 
-Only auto play works atm.
+Default Scene is Map selector
+
+Current Progress: 
+* Auto Play (no manual play yet)
+* Android support
+* Partial slider implemented
+* Map play speed adjustment (only through code atm, play speed is dynamicly tied to audio playback speed)
+
 
 Feature Goals:
 
