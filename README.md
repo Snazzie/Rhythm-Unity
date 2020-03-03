@@ -5,7 +5,7 @@ There are tests maps bundled with this project, click the download maps button o
 
 See other branches for more recent changes.
 
-Default Scene is Map selector
+Default Scene is `Map Select`
 
 Current Progress: 
 * Auto Play (no manual play yet)
