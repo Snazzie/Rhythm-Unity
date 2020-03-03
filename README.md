@@ -8,10 +8,10 @@ See other branches for more recent changes.
 Default Scene is `Map Select`
 
 Current Progress: 
-* Auto Play (no manual play yet)
+* Auto Play (no manual play yet, but can easily be done by handling input as auto play is written to "emulate user input")
 * Android support
 * Partial slider types implemented
-* Slider dynamic back and fourth 
+* Slider dynamic back and fourth travel
 * Map play speed adjustment (only through code atm, play speed is dynamicly and tied to audio playback speed)
 
 
