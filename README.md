@@ -21,7 +21,7 @@ Feature Goals:
 * Advance UI modding
 * Feature full API
 
-If you're interested in taking part of this project, feel free to email me :)
+If you're interested in taking part of this project, feel free to contact me :)
 
 Excuse the non clean code. theres a lot of trial and error in this project and clean code is not number 1 priority atm as it will most likely be rewritten :/
 
