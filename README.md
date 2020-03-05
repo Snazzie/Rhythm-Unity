@@ -1,14 +1,19 @@
-# Music-Game
+# Rhythm-Unity
 OSU Clone made in Unity
 
-<a style="float: left" href="https://www.codefactor.io/repository/github/acoop133/rhythm-unity"><img src="https://www.codefactor.io/repository/github/acoop133/rhythm-unity/badge" alt="CodeFactor" /></a>
-
-There are tests maps bundled with this project using LFS. make sure you pull from LFS also!
-
+There are tests maps bundled with this project, click the download maps button on the map selector screen to download them.
 
 See other branches for more recent changes.
 
-Only auto play works atm.
+Default Scene is `Map Select`
+
+Current Progress: 
+* Auto Play (no manual play yet, but can easily be done by handling input as auto play is written to "emulate user input")
+* Android support
+* Partial slider types implemented
+* Slider dynamic back and fourth travel
+* Map play speed adjustment (only through code atm, map play speed is dynamic and tied to audio playback speed)
+
 
 Feature Goals:
 
@@ -16,9 +21,8 @@ Feature Goals:
 * Slow or speed up maps for fine difficulty adjustment
 * Advance UI modding
 * Feature full API
-and more yet to be listed...
 
-If you're interested in taking part of this project, feel free to email me :)
+If you're interested in taking part of this project, feel free to contact me :)
 
 Excuse the non clean code. theres a lot of trial and error in this project and clean code is not number 1 priority atm as it will most likely be rewritten :/
 
