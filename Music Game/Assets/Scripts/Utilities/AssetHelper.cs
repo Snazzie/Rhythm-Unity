@@ -12,7 +12,7 @@ namespace Assets.Scripts.Utilities
 {
     public class AssetHelper : MonoBehaviour
     {
-        private static string AssetDownloadUrl = "https://github.com/acoop133/Rhythm-Unity/releases/download/Asset%2F0.1/MapsZip.zip";
+        private static string AssetDownloadUrl = "https://github.com/Snazzie/Rhythm-Unity/releases/download/Asset%2F0.1/MapsZip.zip";
 
 
         public void DownloadAndExtractAsset()
