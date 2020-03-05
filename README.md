@@ -12,7 +12,7 @@ Current Progress:
 * Android support
 * Partial slider types implemented
 * Slider dynamic back and fourth travel
-* Map play speed adjustment (only through code atm, map play speed is dynamic and tied to audio playback speed)
+* Play speed mod (Play speed is dynamic and tied to audio playback speed, use the slider on map selection menu to change this)
 
 
 Feature Goals:
