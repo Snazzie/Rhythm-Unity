@@ -10,7 +10,6 @@ namespace Assets.Scripts.TapTapAim
 {
     public class TapTapAimSetup : MonoBehaviour, ITapTapAimSetup
     {
-        public float PlaybackSpeed { get; internal set; } = 1.2f;
         public static double visibleStartOffsetMs = 400;
         private bool showSliders { get; } = true;
         private bool showLinerSlider { get; } = true;
@@ -60,7 +59,7 @@ namespace Assets.Scripts.TapTapAim
             HitSource = GameObject.Find("HitSource").GetComponent<AudioSource>();
             MusicSource = GameObject.Find("MusicSource").GetComponent<AudioSource>();
             MusicSource.clip = GameStartParameters.MapJson.audioClip;
-            MusicSource.pitch = PlaybackSpeed;
+            MusicSource.pitch = GameStartParameters.PlayBackSpeed;
             Tracker = GameObject.Find("Tracker").GetComponent<Tracker>();
             Tracker.TapTapAimSetup = this;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,11 +20,12 @@ public class PlaySpeedControl : MonoBehaviour
     private void OnChange()
     {
         musicSource.pitch = ModSliderControl.Value;
+
+        GameStartParameters.PlayBackSpeed = ModSliderControl.Value;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

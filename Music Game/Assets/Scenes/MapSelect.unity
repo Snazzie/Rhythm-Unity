@@ -1640,12 +1640,30 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1756856998}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1344708752 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 467823748109613331, guid: 943af3c1ed2b6c942a566b30b61bebb2,
+    type: 3}
+  m_PrefabInstance: {fileID: 467823747306756483}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1344708753 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 467823748109613330, guid: 943af3c1ed2b6c942a566b30b61bebb2,
     type: 3}
   m_PrefabInstance: {fileID: 467823747306756483}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1344708756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1344708752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b339c91ca7b7cff4b8e97541dfafd669, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1413479386
 GameObject:
   m_ObjectHideFlags: 0
@@ -4193,6 +4211,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlaySpeedControl
+      objectReference: {fileID: 0}
+    - target: {fileID: 467823748217146894, guid: 943af3c1ed2b6c942a566b30b61bebb2,
+        type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 943af3c1ed2b6c942a566b30b61bebb2, type: 3}
