@@ -34,7 +34,7 @@ namespace Assets.Scripts.TapTapAim
         private List<double> tripTimesInMs { get; set; }
         [SerializeField]
         [Range(0.0f, 100.0f)]
-        private float TParam;
+        private float tParam;
         public void SetUp(ISliderHitCircle initialHitCircle, ISlider slider, ISliderPositionRing sliderPositionRing, double perfectHitTimeInMs, int sliderTrips, ITapTapAimSetup tapTapAimSetup)
         {
             InitialHitCircle = initialHitCircle;
@@ -124,13 +124,13 @@ namespace Assets.Scripts.TapTapAim
                 var thisTripDestinationTimeInMs = tripTimesInMs[indexOf];
 
 
-                TParam = GoingForward
+                tParam = GoingForward
                     ? (float)((thisTripDestinationTimeInMs - frameTime) / TripMs)
                     : 1 - (float)((thisTripDestinationTimeInMs - frameTime) / TripMs);
 
 
                 //Debug.Log($"id:{QueueID} TParam: {TParam}");
-                SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(Mathf.Clamp(TParam, 0f, 1f));
+                SliderPositionRing.transform.localPosition = Slider.GetPositionAtTime(Mathf.Clamp(tParam, 0f, 1f));
 
                 if (GoingForward != previousDirectionIsForward)
                     TapTapAimSetup.HitSource.Play();

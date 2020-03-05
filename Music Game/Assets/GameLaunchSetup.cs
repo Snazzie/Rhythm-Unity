@@ -66,18 +66,11 @@ namespace Assets
                     }
             }
 
-
-
-
-
             if (!Directory.Exists(ResourcePath))
             {
                 Directory.CreateDirectory(ResourcePath);
 
             }
-
-
-
 
             Debug.Log(SceneManager.GetActiveScene().name);
         }
