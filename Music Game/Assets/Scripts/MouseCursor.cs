@@ -89,8 +89,6 @@ namespace Assets.Scripts
 
         }
 
-
-
         public void RayCast()
         {
             try
@@ -121,6 +119,7 @@ namespace Assets.Scripts
 
                             case SliderHitCircle sliderHitCircle:
                                 {
+
                                     if (!sliderHitCircle.IsHitAttempted && sliderHitCircle.IsInAutoPlayHitBound(tapTapAimSetup.Tracker.GetTimeInMs()))
                                     {
                                         Debug.LogWarning("Try hit: " + sliderHitCircle.name);
