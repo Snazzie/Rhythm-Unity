@@ -1,4 +1,9 @@
 # Rhythm-Unity
+
+Status: Currently i have multiple higher priority projects in the works. But id also like to see this project to light. 
+So i'm looking for someone to join on this project adventure. Perhaps bring some motivation back in myself aswell, coding by yourself is never fun.
+
+
 OSU Clone made in Unity
 
 There are tests maps bundled with this project, click the download maps button on the map selector screen to download them.
