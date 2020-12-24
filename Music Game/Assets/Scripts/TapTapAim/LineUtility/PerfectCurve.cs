@@ -26,12 +26,12 @@ namespace Assets.TapTapAim.LineUtility
         }
         public static List<Vector3> GetPoints(List<Vector3> vectors)
         {
-            var positions = new Dictionary<int,Vector3>();
+            var positions = new Dictionary<int, Vector3>();
 
             for (int i = 1; i < vectors.Count + 1; i++)
             {
                 float t = i / (float)vectors.Count;
-                positions[i - 1] = CalculateQuadraticBezierPoint(t, vectors[0], vectors[1], vectors[2]);
+                positions[i - 1] = CalculatePerfectArcPoint(t, vectors[0], vectors[1], vectors[2]);
             }
             return positions.Values.ToList();
         }

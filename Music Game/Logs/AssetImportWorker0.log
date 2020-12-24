@@ -1,0 +1,242 @@
+Using pre-set license
+Built from '2020.2/release' branch; Version is '2020.2.0f1 (3721df5a8b28) revision 3613151'; Using compiler version '192528614'; Build Type 'Release'
+OS: 'Windows 10  (10.0.0) 64bit' Language: 'en' Physical Memory: 65481 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1, IsPro: 0
+
+ COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\2020.2.0f1\Editor\Unity.exe
+-adb2
+-batchMode
+-noUpm
+-name
+AssetImportWorker0
+-projectPath
+D:/Repo/Rhythm-Unity/Music Game
+-logFile
+Logs/AssetImportWorker0.log
+-srvPort
+53381
+Successfully changed project path to: D:/Repo/Rhythm-Unity/Music Game
+D:/Repo/Rhythm-Unity/Music Game
+Using Asset Import Pipeline V2.
+Refreshing native plugins compatible for Editor in 53.23 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 2020.2.0f1 (3721df5a8b28)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2020.2.0f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path D:/Repo/Rhythm-Unity/Music Game/Assets
+GfxDevice: creating device client; threaded=0
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce GTX 980 Ti (ID=0x17c8)
+    Vendor:   
+    VRAM:     6097 MB
+    Driver:   27.21.14.6079
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.2.0f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.2.0f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.2.0f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56352
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/2020.2.0f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001845 seconds.
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 49.90 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.853 seconds
+Platform modules already initialized, skipping
+Registering precompiled user dll's ...
+Registered in 0.005311 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 49.36 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.939 seconds
+Platform modules already initialized, skipping
+========================================================================
+Worker process is ready to serve import requests
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
+Refreshing native plugins compatible for Editor in 0.94 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 3410 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 136.4 MB.
+System memory in use after: 136.6 MB.
+
+Unloading 33 unused Assets to reduce memory usage. Loaded Objects now: 3886.
+Total: 3.057200 ms (FindLiveObjects: 0.492700 ms CreateObjectMapping: 0.088000 ms MarkObjects: 2.408300 ms  DeleteObjects: 0.067100 ms)
+
+========================================================================
+Received Import Request.
+  path: Assets/Scenes/TapTapAim/Circle Mask.png
+  artifactKey: Guid(c26a3be076c1392449e29fad65516b3b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Circle Mask.png using Guid(c26a3be076c1392449e29fad65516b3b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fe84f3d4b6a465e56b819b74384d006e') in 0.119952 seconds
+  Import took 0.125227 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000263 seconds.
+  path: Assets/Scenes/TapTapAim/happy-birthday-rick-astley-481x336.png
+  artifactKey: Guid(c419357c0fa32144dac0e4b59638a4a8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/happy-birthday-rick-astley-481x336.png using Guid(c419357c0fa32144dac0e4b59638a4a8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c4e8bebbe868d5b63a795cac7a7cabd4') in 0.016732 seconds
+  Import took 0.021693 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000291 seconds.
+  path: Assets/Scenes/TapTapAim/SliderHitCircle.prefab
+  artifactKey: Guid(c2331340cfe746b4ca75275af699dbb8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/SliderHitCircle.prefab using Guid(c2331340cfe746b4ca75275af699dbb8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '237f4bf8fab1537214bcd81bdbc3050b') in 0.027568 seconds
+  Import took 0.032624 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000219 seconds.
+  path: Assets/Scenes/TapTapAim/PlayArea.prefab
+  artifactKey: Guid(cdd7d5644b8d00f4f9ce95096095d5f9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/PlayArea.prefab using Guid(cdd7d5644b8d00f4f9ce95096095d5f9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '557adca30adb703998415ffedef1e920') in 0.007450 seconds
+  Import took 0.013081 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000203 seconds.
+  path: Assets/Scenes/TapTapAim/Circle.prefab
+  artifactKey: Guid(f8bf95fb2013a7c48a5e3b8b41062947) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Circle.prefab using Guid(f8bf95fb2013a7c48a5e3b8b41062947) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd5f624c38832230d1fef1ccb13001f39') in 0.008752 seconds
+  Import took 0.013592 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000265 seconds.
+  path: Assets/Scenes/TapTapAim/ScoreBar Mask.png
+  artifactKey: Guid(1fb98c5cff7cf994ab40c9ba6f8ef2d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/ScoreBar Mask.png using Guid(1fb98c5cff7cf994ab40c9ba6f8ef2d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '16be18f20550689e2f4f836dbf815954') in 0.039494 seconds
+  Import took 0.044892 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000228 seconds.
+  path: Assets/Scenes/TapTapAim/Slider.prefab
+  artifactKey: Guid(9cb817e5dfe51ec4fa1f828554bee834) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Slider.prefab using Guid(9cb817e5dfe51ec4fa1f828554bee834) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ef0d9806fced19dba961caf0704beaca') in 0.021474 seconds
+  Import took 0.026536 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000273 seconds.
+  path: Assets/Scenes/TapTapAim/TimingRing.prefab
+  artifactKey: Guid(56cbe1b362ac52244abea22a50930c32) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/TimingRing.prefab using Guid(56cbe1b362ac52244abea22a50930c32) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '558c92df4590627dfed440ccdd96e3de') in 0.007113 seconds
+  Import took 0.013668 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000284 seconds.
+  path: Assets/Scenes/TapTapAim/HitCircle.prefab
+  artifactKey: Guid(15b9f552f4b73d2459caa649d5b70caf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/HitCircle.prefab using Guid(15b9f552f4b73d2459caa649d5b70caf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '652e39054078b425d63ca2819d9719b0') in 0.008849 seconds
+  Import took 0.014028 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000264 seconds.
+  path: Assets/Scenes/TapTapAim/hit.wav
+  artifactKey: Guid(8f534bff471691c43b9ce3303965b461) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/hit.wav using Guid(8f534bff471691c43b9ce3303965b461) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '816f41da350c39aff36351fd4b2fa9ac') in 0.026133 seconds
+  Import took 0.031857 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000298 seconds.
+  path: Assets/Scenes/TapTapAim/Ring Mask.png
+  artifactKey: Guid(aa4794ef1ed5eaa40adf995e432ee61e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Ring Mask.png using Guid(aa4794ef1ed5eaa40adf995e432ee61e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3d127b4d9b78fa3e40d637b19f577e4a') in 0.013045 seconds
+  Import took 0.018602 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000196 seconds.
+  path: Assets/Scenes/TapTapAim/hit.wav
+  artifactKey: Guid(8f534bff471691c43b9ce3303965b461) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/hit.wav using Guid(8f534bff471691c43b9ce3303965b461) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '816f41da350c39aff36351fd4b2fa9ac') in 0.009708 seconds
+  Import took 0.014475 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000189 seconds.
+  path: Assets/Scenes/TapTapAim/Circle Mask.png
+  artifactKey: Guid(c26a3be076c1392449e29fad65516b3b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Circle Mask.png using Guid(c26a3be076c1392449e29fad65516b3b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fe84f3d4b6a465e56b819b74384d006e') in 0.010656 seconds
+  Import took 0.015435 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000271 seconds.
+  path: Assets/Scenes/TapTapAim/Scene Settings Profile.asset
+  artifactKey: Guid(ce314b4181888b44faa79fcc7c50b421) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Scene Settings Profile.asset using Guid(ce314b4181888b44faa79fcc7c50b421) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'be4202739e96fead48e55dec04a2f13a') in 0.009379 seconds
+  Import took 0.014426 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000230 seconds.
+  path: Assets/Scenes/TapTapAim/SliderPositionRing.prefab
+  artifactKey: Guid(4ca7e3c7523e87440932cb2485dc8e7d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/SliderPositionRing.prefab using Guid(4ca7e3c7523e87440932cb2485dc8e7d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3ef36eae5c44b7308db826d08b6c0305') in 0.006801 seconds
+  Import took 0.011802 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000235 seconds.
+  path: Assets/Scenes/TapTapAim/HitSlider.prefab
+  artifactKey: Guid(049349e5f1f2a014fa8e579174dd191d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/HitSlider.prefab using Guid(049349e5f1f2a014fa8e579174dd191d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '10e123e89baab8d2aede64e2d9e4e0d0') in 0.007824 seconds
+  Import took 0.013853 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000310 seconds.
+  path: Assets/Scenes/TapTapAim/Line.mat
+  artifactKey: Guid(412154a295862334ea2668936366879a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Line.mat using Guid(412154a295862334ea2668936366879a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '50c6b792fac42e1b332d334bdbe001e1') in 0.084709 seconds
+  Import took 0.090832 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.030119 seconds.
+  path: Assets/Scenes/TapTapAim/Line.mat
+  artifactKey: Guid(412154a295862334ea2668936366879a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Scenes/TapTapAim/Line.mat using Guid(412154a295862334ea2668936366879a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '50c6b792fac42e1b332d334bdbe001e1') in 0.009889 seconds
+  Import took 0.015919 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.005709 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 0.67 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Invoked RoslynAnalysisRunner static constructor.
+RoslynAnalysisRunner will not be running.
+RoslynAnalysisRunner has terminated.
+Mono: successfully reloaded assembly
+- Completed reload, in  0.914 seconds
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 0.64 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 3352 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 136.9 MB.
+System memory in use after: 137.1 MB.
+
+Unloading 25 unused Assets to reduce memory usage. Loaded Objects now: 3936.
+Total: 2.396200 ms (FindLiveObjects: 0.416000 ms CreateObjectMapping: 0.090600 ms MarkObjects: 1.860400 ms  DeleteObjects: 0.027500 ms)
+
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
